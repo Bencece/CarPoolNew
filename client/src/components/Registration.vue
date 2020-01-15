@@ -29,7 +29,7 @@ name: 'Registration',
             email: this.email,
             password: this.password
         })
-        console.log(res.data);
+        console.log(res);
       }
   },
 }
