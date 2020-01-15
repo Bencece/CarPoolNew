@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios from "../../node_modules/axios";
 
 export default () => {
     return axios.create({
-        baseURL: 'localhost:3000'
+        baseURL: 'http://localhost:3000'
     })
 }
