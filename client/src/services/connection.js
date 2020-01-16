@@ -1,3 +1,4 @@
+/* eslint-disable */
 import axios from "../../node_modules/axios";
 
 export default () => {
