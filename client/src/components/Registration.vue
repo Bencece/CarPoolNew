@@ -18,6 +18,7 @@
 </template>
 <script>
 import auth from '@/services/authentication'
+const axios = require('axios');
 export default {
   name: 'Registration',
   data () {
@@ -36,6 +37,9 @@ export default {
         })
         //console.log(res);
       }
+  },
+  mounted() {
+    
   },
 }
 </script>

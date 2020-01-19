@@ -10,6 +10,8 @@
         <input type="password" class="form-control" id="password" v-model="password" placeholder="Addj meg egy jelszót!" required>
     </div>
     <button type="submit" class="btn btn-primary" @click="register">Bejelentkezés</button>
+    <br/>
+    <router-link :to="{ path: '/registration' }">Regisztrálj itt</router-link>
     </div>
 </template>
 <script>
