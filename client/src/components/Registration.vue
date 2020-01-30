@@ -17,8 +17,8 @@
     </div>
 </template>
 <script>
-import auth from '@/services/authentication'
-const axios = require('axios');
+/* eslint-disable */
+import auth from '@/services/authentication';
 export default {
   name: 'Registration',
   data () {

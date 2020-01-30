@@ -9,23 +9,29 @@
         <label for="password">Jelszó:</label>
         <input type="password" class="form-control" id="password" v-model="password" placeholder="Addj meg egy jelszót!" required>
     </div>
-    <button type="submit" class="btn btn-primary" @click="register">Bejelentkezés</button>
+    <button type="submit" class="btn btn-primary" @click="login">Bejelentkezés</button>
     <br/>
     <router-link :to="{ path: '/registration' }">Regisztrálj itt</router-link>
     </div>
 </template>
 <script>
+/* eslint-disable */
 import auth from '@/services/authentication'
 export default {
   name: 'Login',
   data () {
     return {
-      name: '',
       email: '',
       password: ''
     }
   },
   methods: {
+          async login(){
+            var res = await auth.login({
+            email: this.email,
+            password: this.password
+        })
+      }
   }
 }
 </script>
