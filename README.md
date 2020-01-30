@@ -1,4 +1,4 @@
-# CarPoolNew
+# CarPool
 Közösségi és bérautós szolgáltatás
 
 ## Az alkalmazásról
