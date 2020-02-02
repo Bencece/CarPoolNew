@@ -83,7 +83,7 @@ function(email, password, done) {
 
 app.post('/login',passport.authenticate('local',{successRedirect:'/home', failureRedirect: '/registration'}),
     function(req,res,next){
-      res.redirect('/home');
+      res.send({login: true});
 });
 
 /*app.get('/home',
