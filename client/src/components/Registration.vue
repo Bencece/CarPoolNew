@@ -13,7 +13,7 @@
         <label for="password">Jelszó:</label>
         <input type="password" class="form-control" id="password" v-model="password" placeholder="Addj meg egy jelszót!" required>
     </div>
-    <button type="submit" class="btn btn-primary" @click="register">Regisztráció</button>
+    <button type="submit" class="btn btn-primary" v-on:click="register">Regisztráció</button>
     </div>
 </template>
 <script>
@@ -29,13 +29,13 @@ export default {
     }
   },
   methods: {
-        async register(){
-            var res = await auth.registration({
+         register(){
+            var res = auth.registration({
             name: this.name,
             email: this.email,
             password: this.password
         })
-        //console.log(res);
+        console.log(res);
       }
   },
   mounted() {
