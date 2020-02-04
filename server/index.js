@@ -1,19 +1,8 @@
 const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-//var session = require('express-session');
+var session = require('express-session');
 var mysql = require('mysql');
 const app = express();
-
-app.use(bodyParser.json())
-app.use(cors())
-
-app.use(require('morgan')('combined'));
-//app.use(session({ secret: 'super secret' })); //to make passport remember the user on other pages too.(Read about session store. I used express-sessions.)
-app.use(passport.initialize());
-app.use(passport.session());
 
 var con = mysql.createConnection({
   host: "localhost",
@@ -27,69 +16,72 @@ con.connect(function(err) {
   console.log("Connected!");
 });
 
-app.post('/register', function (req, res) {
-  var sql = "INSERT INTO users (name, password, email) VALUES ('"+req.body.name+"','"+req.body.password+"','"+req.body.email+"')";
-  con.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log(req.body.name+" sikeresen regisztrált");
-    res.send('registration', { ok: true});
-  });
-});
+const initializePassport = require('./config')
+initializePassport(
+  passport,
+  email => users.find(user => user.email === email), //TODO
+  id => users.find(user => user.id === id)
+)
 
-passport.serializeUser(function(user, done) { //In serialize user you decide what to store in the session. Here I'm storing the user id only.
-  done(null, user.id);
-});
+app.use(express());
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 
-passport.deserializeUser(function(id, done) { //Here you retrieve all the info of the user from the session storage using the user id stored in the session earlier using serialize user.
-  con.connect(function(err) {
-    if (err) throw err;
-    con.query("SELECT * FROM users WHERE id = "+id+" ", function (err, result, fields) {
+app.get('/', checkAuthenticated, (req, res) => {
+  res.redirect("/home");
+})
+
+app.get('/login', checkNotAuthenticated, (req, res) => {
+  res.redirect('/login')
+})
+
+app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+  successRedirect: '/home',
+  failureRedirect: '/login',
+  failureFlash: true
+}))
+
+app.get('/register', checkNotAuthenticated, (req, res) => {
+  res.redirect('/register')
+})
+
+app.post('/register', checkNotAuthenticated, async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    var sql = "INSERT INTO users (name, password, email) VALUES ('"+req.body.name+"','"+hashedPassword+"','"+req.body.email+"')";
+    con.query(sql, function (err, result) {
       if (err) throw err;
-      console.log(result);
-      done(err, result[0].id);
+      console.log(req.body.name+" sikeresen regisztrált");
     });
-  });
-});
+    res.redirect('/login')
+  } catch {
+    res.redirect('/register')
+  }
+})
 
-passport.use(new LocalStrategy({
-  usernameField: 'email',
-  passwordField: 'password',
-  session: true
-},
-function(email, password, done) {
-    con.query("SELECT * FROM users WHERE email = '"+email+"' ", function (err, result, fields) {
-      message = [{"msg": "Adatbázis hiba"}];
-      if(err) return done(err,{message:message});//wrong roll_number or password; 
-        var pass_retrieved = password;
-        if(pass_retrieved == result[0].password){
-          return done(null,result[0]);
-        }else{
-          message = [{"msg": "Incorrect Password!"}];
-          return done(null,false,{message:message}); 
-        }
-        /*bcrypt.compare(result[0].password, pass_retrieved, function(err3, correct) {
-          if(err3){
-            message = [{"msg": "Incorrect Password!"}];
-            return done(null,false,{message:message});  // wrong password
-          }       
-          if(correct){
-              return done(null,user);
-          } 
-        });*/
-    });
-}));
+app.post('/logout', (req, res) => {
+  req.logOut()
+  res.redirect('/login')
+})
 
+function checkAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next()
+  }
 
+  res.redirect('/login')
+}
 
-app.post('/login',passport.authenticate('local',{successRedirect:'/home', failureRedirect: '/registration'}),
-    function(req,res,next){
-      res.send({login: true});
-});
-
-/*app.get('/home',
-  require('connect-ensure-login').ensureLoggedIn(),
-  function(req, res){
-    res.render('profile', { user: req.user });
-  });*/
+function checkNotAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.redirect('/')
+  }
+  next()
+}
  
 app.listen(3000);
