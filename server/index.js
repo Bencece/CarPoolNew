@@ -3,6 +3,8 @@ var passport = require('passport');
 var session = require('express-session');
 var mysql = require('mysql');
 const app = express();
+var cors = require('cors');
+var bcrypt = require('bcrypt');
 
 var con = mysql.createConnection({
   host: "localhost",
@@ -41,8 +43,10 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }))
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(cors());
+app.use(express.json());
 
 app.get('/', checkAuthenticated, (req, res) => {
   res.redirect("/home");
@@ -63,17 +67,17 @@ app.get('/registraton', checkNotAuthenticated, (req, res) => {
 })
 
 app.post('/register', checkNotAuthenticated, async (req, res) => {
-  console.log("anyád")
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
     var sql = "INSERT INTO users (name, password, email) VALUES ('"+req.body.name+"','"+hashedPassword+"','"+req.body.email+"')";
+    console.log(sql)
     con.query(sql, function (err, result) {
       if (err) throw err;
       console.log(req.body.name+" sikeresen regisztrált");
     });
-    res.redirect('/login')
-  } catch {
-    res.redirect('/registration')
+    res.send('/login')
+  } catch (err) {
+    res.send('/registration')
   }
 })
 
@@ -91,8 +95,8 @@ function checkAuthenticated(req, res, next) {
 }
 
 function checkNotAuthenticated(req, res, next) {
-  console.log("humor1")
   if (req.isAuthenticated()) {
+    console.log('Not auth')
     return res.redirect('/')
   }
   next()
