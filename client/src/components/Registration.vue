@@ -19,6 +19,7 @@
 <script>
 /* eslint-disable */
 import auth from '@/services/authentication';
+import router from '../router/index';
 export default {
   name: 'Registration',
   data () {
@@ -34,13 +35,16 @@ export default {
             name: this.name,
             email: this.email,
             password: this.password
-        }).then(function(res){
-          console.log(res)
+        }).then(function(response){
+          if(response.data.message){
+            router.push('/');
+          }else{
+            console.log(response.data.message);
+          }
         })
       }
   },
   mounted() {
-    
   },
 }
 </script>

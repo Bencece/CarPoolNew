@@ -74,9 +74,9 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
       if (err) throw err;
       console.log(req.body.name+" sikeresen regisztrált");
     });
-    res.send('/login', {message: "Sikeres regisztráció!"})
+    res.send({message: true});
   } catch (err) {
-    res.send('/registration')
+    res.send({message: err});
   }
 })
 
