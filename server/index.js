@@ -70,12 +70,11 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
     var sql = "INSERT INTO users (name, password, email) VALUES ('"+req.body.name+"','"+hashedPassword+"','"+req.body.email+"')";
-    console.log(sql)
     con.query(sql, function (err, result) {
       if (err) throw err;
       console.log(req.body.name+" sikeresen regisztrált");
     });
-    res.send('/login')
+    res.send('/login', {message: "Sikeres regisztráció!"})
   } catch (err) {
     res.send('/registration')
   }

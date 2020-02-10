@@ -34,8 +34,9 @@ export default {
             name: this.name,
             email: this.email,
             password: this.password
+        }).then(function(res){
+          console.log(res)
         })
-        console.log(res)
       }
   },
   mounted() {
