@@ -16,7 +16,8 @@
 </template>
 <script>
 /* eslint-disable */
-import auth from '@/services/authentication'
+import auth from '@/services/authentication';
+import router from '../router/index';
 export default {
   name: 'Login',
   data () {
@@ -30,6 +31,12 @@ export default {
             var res = await auth.login({
             email: this.email,
             password: this.password
+        }).then(function(response){
+          if(response.data.message){
+            router.push('/home');
+          }else{
+            console.log(response);
+          }
         })
       }
   }

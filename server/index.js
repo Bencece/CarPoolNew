@@ -25,14 +25,15 @@ initializePassport(
     var sql = "SELECT * FROM users WHERE email = '"+email+"'";
     con.query(sql, function (err, result) {
       if (err) throw err;
-      return result;
+      console.log(result[0].name)
+      return result[0].name;
     });
   },
   id = id =>{
     var sql = "SELECT * FROM users WHERE id = '"+id+"'";
     con.query(sql, function (err, result) {
       if (err) throw err;
-      return result;
+      return result[0].id;
     });
   } 
 )
@@ -48,23 +49,21 @@ app.use(passport.session());
 app.use(cors());
 app.use(express.json());
 
-app.get('/', checkAuthenticated, (req, res) => {
+/*app.get('/', checkAuthenticated, (req, res) => {
   res.redirect("/home");
-})
+})*/
 
-app.get('/login', checkNotAuthenticated, (req, res) => {
+/*app.get('/login', checkNotAuthenticated, (req, res) => {
   res.redirect('/login')
+})*/
+
+app.post('/login', checkNotAuthenticated, passport.authenticate('local'), function(req, res){
+  res.send({message:true});
 })
 
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/home',
-  failureRedirect: '/login',
-  failureFlash: true
-}))
-
-app.get('/registraton', checkNotAuthenticated, (req, res) => {
+/*app.get('/registraton', checkNotAuthenticated, (req, res) => {
   res.redirect('/registration')
-})
+})*/
 
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
