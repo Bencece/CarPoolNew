@@ -18,7 +18,70 @@ con.connect(function(err) {
   console.log("Connected!");
 });
 
-const initializePassport = require('./config')
+app.use(express());
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: false
+}))
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(cors());
+app.use(express.json());
+
+/*Regisztráció*/
+app.post('/register', async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    var sql = "INSERT INTO users (name, password, email) VALUES ('"+req.body.name+"','"+hashedPassword+"','"+req.body.email+"')";
+    con.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log(req.body.name+" sikeresen regisztrált");
+    });
+    res.send({message: true});
+  } catch (err) {
+    res.send({message: err});
+  }
+});
+
+var passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
+
+passport.use(new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password'
+  },
+  function(email, password, done) {
+    let user = new Promise(function(resolve,reject){
+      var sql = "SELECT * FROM users WHERE email = '"+email+"'";
+      con.query(sql, function (err, result) {
+        if (err) throw reject(err);
+        console.log(result[0].name);
+        resolve(result[0]);
+      });
+    });
+    user.then(user=>{
+      if (!user) {
+        console.log("!user");
+      }
+      /*if (!user.validPassword(password)) {
+        return done(null, false, { message: 'Incorrect password.' });
+      }*/
+      console.log("user: "+user.id)
+      return done(null, user);
+    }).catch(done(null, false, { message: 'Incorrect username.' }));
+  }
+));
+
+passport.serializeUser((user, done) => done(null, user.id));
+/*passport.deserializeUser((id, done) => {
+  return done(null, getUserById(id));
+});*/
+
+app.post('/login',
+  passport.authenticate('local', { successRedirect: '/#/home',
+                                   failureRedirect: '/#/login' }));
+
+/*const initializePassport = require('./config')
 initializePassport(
   passport,
   email = email =>{
@@ -36,18 +99,8 @@ initializePassport(
       return result[0].id;
     });
   } 
-)
+)*/
 
-app.use(express());
-app.use(session({
-  secret: 'secret',
-  resave: false,
-  saveUninitialized: false
-}))
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(cors());
-app.use(express.json());
 
 /*app.get('/', checkAuthenticated, (req, res) => {
   res.redirect("/home");
@@ -57,29 +110,15 @@ app.use(express.json());
   res.redirect('/login')
 })*/
 
-app.post('/login', checkNotAuthenticated, passport.authenticate('local'), function(req, res){
+/*app.post('/login', passport.authenticate('local'), function(req, res){
   res.send({message:true});
-})
+})*/
 
 /*app.get('/registraton', checkNotAuthenticated, (req, res) => {
   res.redirect('/registration')
 })*/
 
-app.post('/register', checkNotAuthenticated, async (req, res) => {
-  try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    var sql = "INSERT INTO users (name, password, email) VALUES ('"+req.body.name+"','"+hashedPassword+"','"+req.body.email+"')";
-    con.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log(req.body.name+" sikeresen regisztrált");
-    });
-    res.send({message: true});
-  } catch (err) {
-    res.send({message: err});
-  }
-})
-
-app.post('/logout', (req, res) => {
+/*app.post('/logout', (req, res) => {
   req.logOut()
   res.redirect('/login')
 })
@@ -98,6 +137,6 @@ function checkNotAuthenticated(req, res, next) {
     return res.redirect('/')
   }
   next()
-}
+}*/
  
 app.listen(3000);
