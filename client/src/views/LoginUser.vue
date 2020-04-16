@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <div class="jumbotron loginBox">
+  <div class="row loginBox">
+    <div class="col-sm-4"></div>
+    <div class="jumbotron col-sm-4">
       <h1 class="title">Üdvözlünk!</h1>
       <form @submit.prevent="login">
         <div class="form-group">
@@ -11,11 +12,12 @@
           <label for="password">Jelszó:</label>
           <input v-model="password" type="password" name="password" value class="form-control">
         </div>
-        <button type="submit" name="button" class="btn btn-success loginButton">Bejelentkezés</button>
+        <button type="submit" name="button" class="btn btn-success">Bejelentkezés</button>
         <br/>
         <router-link to="/register" class="regLabel">Nincs fiókod? Regisztrálj itt...</router-link>
       </form>
     </div>
+    <div class="col-sm-4"></div>
   </div>
 </template>
 
@@ -44,18 +46,11 @@ export default {
 
 <style>
 .loginBox{
-  width: 50%;
-  margin: auto;
-  position: relative;
-  top:50%;
-}
-.title{
-  text-align: center;
-}
-.loginButton{
-  float: left;
+  margin-top: 10%;
+  margin-right: 0;
+margin-left: 0;
 }
 .regLabel{
-  float: right;
+  margin-top: 10px;;
 }
 </style>
