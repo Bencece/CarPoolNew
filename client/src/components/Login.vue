@@ -1,6 +1,7 @@
 <template>
   <div class="jumbotron">
     <h1>Bejelentkezés</h1>
+    <form action="//localhost:3000/login" method="post">
     <div class="form-group">
         <label for="email">Email cím:</label>
         <input type="email" class="form-control" id="email" v-model="email" placeholder="Add meg az e-mail címed!" required>
@@ -9,8 +10,9 @@
         <label for="password">Jelszó:</label>
         <input type="password" class="form-control" id="password" v-model="password" placeholder="Addj meg egy jelszót!" required>
     </div>
-    <button type="submit" class="btn btn-primary" @click="login">Bejelentkezés</button>
+    <button type="submit" class="btn btn-primary">Bejelentkezés</button>
     <br/>
+    </form>
     <router-link :to="{ path: '/registration' }">Regisztrálj itt</router-link>
     </div>
 </template>
@@ -31,12 +33,9 @@ export default {
             var res = await auth.login({
             email: this.email,
             password: this.password
-        }).then(function(response){
-          if(response.data.message){
-            router.push('/home');
-          }else{
-            console.log(response);
-          }
+        }).then(function(res){
+          console.log(res);
+          window.sessionStorage("userID", res.user)
         })
       }
   }

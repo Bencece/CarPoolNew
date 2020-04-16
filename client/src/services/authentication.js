@@ -6,9 +6,9 @@ export default {
         return connection().post('/register', userdata);
     },
     login (userdata) {
-        return connection().post('/login', userdata)
-        .then(function(res){
+        return connection().post('/login', userdata);
+        /*.then(function(res){
             console.log(res);
-        });
+        });*/
     }
 }
