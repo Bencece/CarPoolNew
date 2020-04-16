@@ -1,142 +1,101 @@
-const express = require('express');
-var passport = require('passport');
-var session = require('express-session');
-var mysql = require('mysql');
-const app = express();
-var cors = require('cors');
-var bcrypt = require('bcrypt');
+const express = require('express')
+const jwt = require('jsonwebtoken')
+const cors = require('cors')
+const bodyParser = require('body-parser')
+const fs = require('fs')
+const events = require('./db/events.json')
 
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "carpool"
-});
+const app = express()
 
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-});
+app.use(cors())
+app.use(bodyParser.json())
 
-app.use(express());
-app.use(session({
-  secret: 'secret',
-  resave: false,
-  saveUninitialized: false
-}))
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(cors());
-app.use(express.json());
-
-/*Regisztráció*/
-app.post('/register', async (req, res) => {
-  try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    var sql = "INSERT INTO users (name, password, email) VALUES ('"+req.body.name+"','"+hashedPassword+"','"+req.body.email+"')";
-    con.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log(req.body.name+" sikeresen regisztrált");
-    });
-    res.send({message: true});
-  } catch (err) {
-    res.send({message: err});
-  }
-});
-
-var passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
-
-passport.use(new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password'
-  },
-  function(email, password, done) {
-    let user = new Promise(function(resolve,reject){
-      var sql = "SELECT * FROM users WHERE email = '"+email+"'";
-      con.query(sql, function (err, result) {
-        if (err) throw reject(err);
-        console.log(result[0].name);
-        resolve(result[0]);
-      });
-    });
-    user.then(user=>{
-      if (!user) {
-        console.log("!user");
-      }
-      /*if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }*/
-      console.log("user: "+user.id)
-      return done(null, user);
-    }).catch(done(null, false, { message: 'Incorrect username.' }));
-  }
-));
-
-passport.serializeUser((user, done) => done(null, user.id));
-/*passport.deserializeUser((id, done) => {
-  return done(null, getUserById(id));
-});*/
-
-app.post('/login',
-  passport.authenticate('local', { successRedirect: '/#/home',
-                                   failureRedirect: '/#/login' }));
-
-/*const initializePassport = require('./config')
-initializePassport(
-  passport,
-  email = email =>{
-    var sql = "SELECT * FROM users WHERE email = '"+email+"'";
-    con.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log(result[0].name)
-      return result[0].name;
-    });
-  },
-  id = id =>{
-    var sql = "SELECT * FROM users WHERE id = '"+id+"'";
-    con.query(sql, function (err, result) {
-      if (err) throw err;
-      return result[0].id;
-    });
-  } 
-)*/
-
-
-/*app.get('/', checkAuthenticated, (req, res) => {
-  res.redirect("/home");
-})*/
-
-/*app.get('/login', checkNotAuthenticated, (req, res) => {
-  res.redirect('/login')
-})*/
-
-/*app.post('/login', passport.authenticate('local'), function(req, res){
-  res.send({message:true});
-})*/
-
-/*app.get('/registraton', checkNotAuthenticated, (req, res) => {
-  res.redirect('/registration')
-})*/
-
-/*app.post('/logout', (req, res) => {
-  req.logOut()
-  res.redirect('/login')
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to the API.'
+  })
 })
 
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
+app.get('/dashboard', verifyToken, (req, res) => { //verifyToken is middleware
+  jwt.verify(req.token, 'the_secret_key', err => { // verifies token
+    if (err) { // if error, respond with 401 code
+      res.sendStatus(401)
+    } else { // otherwise, respond with private data
+      res.json({
+        events: events
+      })
+    }
+  })
+})
 
-  res.redirect('/login')
+app.post('/register', (req, res) => {
+  if (req.body) {
+    const user = {
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password
+      // In a production app, you'll want to encrypt the password
+    }
+
+    const data = JSON.stringify(user, null, 2)
+    var dbUserEmail = require('./db/user.json').email
+
+    if (dbUserEmail === req.body.email) {
+      res.sendStatus(400)
+    } else {
+      fs.writeFile('./db/user.json', data, err => {
+        if (err) {
+          console.log(err + data)
+        } else {
+          const token = jwt.sign({ user }, 'the_secret_key')
+          // In a production app, you'll want the secret key to be an environment variable
+          res.json({
+            token,
+            email: user.email,
+            name: user.name
+          })
+        }
+      })
+    }
+  } else {
+    res.sendStatus(400)
+  }
+})
+
+app.post('/login', (req, res) => {
+  const userDB = fs.readFileSync('./db/user.json')
+  const userInfo = JSON.parse(userDB)
+  if (
+    req.body &&
+    req.body.email === userInfo.email &&
+    req.body.password === userInfo.password
+  ) {
+    const token = jwt.sign({ userInfo }, 'the_secret_key')
+    // In a production app, you'll want the secret key to be an environment variable
+    res.json({
+      token,
+      email: userInfo.email,
+      name: userInfo.name
+    })
+  } else {
+    res.sendStatus(400)
+  }
+})
+
+// MIDDLEWARE
+function verifyToken (req, res, next) {
+  const bearerHeader = req.headers['authorization']
+
+  if (typeof bearerHeader !== 'undefined') {
+    const bearer = bearerHeader.split(' ')
+    const bearerToken = bearer[1]
+    req.token = bearerToken
+    next()
+  } else {
+    res.sendStatus(401)
+  }
 }
 
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    console.log('Not auth')
-    return res.redirect('/')
-  }
-  next()
-}*/
- 
-app.listen(3000);
+app.listen(3000, () => {
+  console.log('Server started on port 3000')
+})
