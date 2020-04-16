@@ -1,16 +1,18 @@
 <template>
   <div>
     <form @submit.prevent="login">
-      <label for="email">
-        Email:
-      </label>
-      <input v-model="email" type="email" name="email" value>
-
-      <label for="password">
-        Password:
-      </label>
-      <input v-model="password" type="password" name="password" value>
-
+      <div class="form-group">
+        <label for="email">
+          Email:
+        </label>
+        <input v-model="email" type="email" name="email" value class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="password">
+          Password:
+        </label>
+        <input v-model="password" type="password" name="password" value class="form-control">
+      </div>
       <button type="submit" name="button">
         Login
       </button>
