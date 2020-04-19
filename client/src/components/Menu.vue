@@ -3,13 +3,13 @@
       <nav class="navbar nav1">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <router-link v-if="loggedIn" to="/dashboard" class="nav-link">CarPool</router-link>
+            <router-link v-if="loggedIn" to="/dashboard" class="nav-link navButton">CarPool</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="">Link 3</a>
+            <a class="nav-link navButton" href="">Link 3</a>
           </li>
           <li class="nav-item">
-            <a v-if="loggedIn" @click="logout" class="nav-link" href="">Kijelentkezés</a>
+            <a v-if="loggedIn" @click="logout" class="nav-link navButton" href="">Kijelentkezés</a>
           </li>
         </ul>
       </nav>
@@ -40,7 +40,8 @@ export default {
   right: 0;
 }
 .navbar{
-  background-color: #0E2A5F;
+  /*background-color: #0E2A5F;*/
+  background-image: linear-gradient(rgb(29, 96, 221), #0E2A5F);
   height: 100vh;
 }
 .navbar-nav{
@@ -50,21 +51,21 @@ export default {
   top: 0;
 }
 ul {
-  background-color: rgb(29, 96, 221);
+  /*background-color: rgb(29, 96, 221);*/
 }
-a{
+.navButton{
   /*background-color: rgb(29, 96, 221);*/
   color: white;
   padding-left: 20px !important;
   padding-bottom: 20px !important;
   margin-bottom: 6%;
-  margin-left: 10px;
+  /*margin-left: 10px;
   margin-right: 10px;
-  border-radius: 10px 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;*/
   font-weight: bold;
 }
-a:hover {
-  background-color: rgb(25, 184, 162);
+.navButton:hover {
+  background-color: rgb(29, 96, 221);
   color: white;
   padding-left: 20px !important;  
   padding-bottom: 20px;

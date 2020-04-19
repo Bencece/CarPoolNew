@@ -1,25 +1,28 @@
 <template>
-  <div>
-    <form @submit.prevent="register">
-      <label for="name">
-        Name:
-      </label>
-      <input v-model="name" type="text" name="name" value>
-
-      <label for="email">
-        Email:
-      </label>
-      <input v-model="email" type="email" name="email" value>
-
-      <label for="password">
-        Password:
-      </label>
-      <input v-model="password" type="password" name="password" value>
-
-      <button type="submit" name="button">
-        Register
-      </button>
-    </form>
+  <div class="row loginBox">
+    <div class="col-sm-4"></div>
+    <div class="jumbotron col-sm-4">
+      <h1 class="title">Regisztráció</h1>
+      <h6>Ha nincs fiókod itt tudsz regisztrálni. Töltsd ki a mezőket, majd kattints a regisztráció gomra.</h6>
+      <form @submit.prevent="register">
+        <div class="form-group">
+          <label for="name">Neved:</label>
+          <input v-model="name" type="text" name="name" value class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input v-model="email" type="email" name="email" value class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="password">Jelszó:</label>
+          <input v-model="password" type="password" name="password" value class="form-control">
+        </div>
+        <button type="submit" name="button" class="btn btn-success">Regisztráció</button>
+        <br/>
+        <router-link to="/" class="regLabel">Van már fiókod? Lépj be itt...</router-link>
+      </form>
+    </div>
+    <div class="col-sm-4"></div>
   </div>
 </template>
 
@@ -49,4 +52,7 @@ export default {
 </script>
 
 <style>
+.regLabel{
+  margin-top: 10px;;
+}
 </style>
