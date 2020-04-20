@@ -1,6 +1,6 @@
 <template>
-  <div>
-        <h1>Dashboard</h1>
+  <div id="dashboard">
+        <h1>Kezdőlap</h1>
         <template v-if="!isLoading">
           <EventCard v-for="event in events" :key="event.id" :event="event" />
         </template>
@@ -34,4 +34,7 @@ export default {
 </script>
 
 <style scoped>
+#dashboard{
+  height: 100vh;
+}
 </style>

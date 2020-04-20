@@ -38,10 +38,12 @@ export default {
   position: absolute;
   left: 0;
   right: 0;
+  box-shadow: black 2px 2px 10px;
 }
 .navbar{
-  /*background-color: #0E2A5F;*/
-  background-image: linear-gradient(rgb(29, 96, 221), #0E2A5F);
+  /*background-color: #0E2A5F;
+  background-image: linear-gradient(rgb(29, 96, 221), #0E2A5F);*/
+  background-image: linear-gradient(#00a108, #115f01);
   height: 100vh;
 }
 .navbar-nav{
@@ -65,7 +67,7 @@ ul {
   font-weight: bold;
 }
 .navButton:hover {
-  background-color: rgb(29, 96, 221);
+  background-color: #00cc0a;
   color: white;
   padding-left: 20px !important;  
   padding-bottom: 20px;

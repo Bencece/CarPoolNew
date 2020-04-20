@@ -1,7 +1,6 @@
 <template>
-  <div class="row loginBox">
-    <div class="col-sm-4"></div>
-    <div class="jumbotron col-sm-4">
+  <div class="loginBox">
+    <div class="jumbotron">
       <h1 class="title">Üdvözlünk!</h1>
       <form @submit.prevent="login">
         <div class="form-group">
@@ -17,7 +16,6 @@
         <router-link to="/register" class="regLabel">Nincs fiókod? Regisztrálj itt...</router-link>
       </form>
     </div>
-    <div class="col-sm-4"></div>
   </div>
 </template>
 
@@ -44,13 +42,14 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .loginBox{
-  margin-top: 10%;
-  margin-right: 0;
-margin-left: 0;
+  top: 30%;
+  position: relative;
+  margin: auto;
+  width: 40%;
 }
 .regLabel{
-  margin-top: 10px;;
+  margin-top: 10px;
 }
 </style>

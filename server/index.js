@@ -46,7 +46,6 @@ app.post('/register', (req, res) => {
       password: req.body.password
       // In a production app, you'll want to encrypt the password
     }
-    console.log(user);
     con.query("SELECT * FROM users WHERE email='"+user.email+"'", function(err, userdb){
       if (err){
         console.log(err);

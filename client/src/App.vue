@@ -27,8 +27,7 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
 .menuBar{
   background-color: #000000;
   height: 100vh;
@@ -40,5 +39,14 @@ export default {
 .contentBox{
   margin-right: 0;
   margin-left: 0;
+}
+html{
+  height: 100%;
+}
+#app{
+  height: 100vh;
+  background-image: linear-gradient(#115f01, #00cc0a);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 </style>
