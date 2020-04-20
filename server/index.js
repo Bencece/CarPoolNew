@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const events = require('./db/events.json');
 const mysql = require('mysql');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const app = express();
 
@@ -51,17 +53,23 @@ app.post('/register', (req, res) => {
       } else if (userdb[0] == []){
         res.sendStatus(400); //Ha van már ilyen felhasználó
       } else {
-        con.query("INSERT INTO users (username, email, password) VALUES('"+user.name+"', '"+user.email+"', '"+user.password+"')", function(err, result){
+        bcrypt.hash(user.password, saltRounds, function(err, hash) {
           if (err){
-            console.log(err + result);
+            console.log(err);
           } else {
-            const token = jwt.sign({ user }, 'the_secret_key')
-            // In a production app, you'll want the secret key to be an environment variable
-            res.json({
-              token,
-              email: user.email,
-              name: user.name
-            })
+            con.query("INSERT INTO users (username, email, password) VALUES('"+user.name+"', '"+user.email+"', '"+hash+"')", function(err, result){
+              if (err){
+                console.log(err + result);
+              } else {
+                const token = jwt.sign({ user }, 'the_secret_key')
+                // In a production app, you'll want the secret key to be an environment variable
+                res.json({
+                  token,
+                  email: user.email,
+                  name: user.name
+                })
+              }
+            });
           }
         });
       }
@@ -81,18 +89,25 @@ app.post('/login', (req, res) => {
       if (err){
         console.log(err);
         res.sendStatus(400);
-      } else if (user.email === userdb[0].email && user.password === userdb[0].password){
-        const userInfo = {
-          email: userdb[0].email,
-          name: userdb[0].username
-        }
-        const token = jwt.sign({ userInfo }, 'the_secret_key')
-        // In a production app, you'll want the secret key to be an environment variable
-        res.json({
-          token,
-          email: userInfo.email,
-          name: userInfo.name
-        })
+      } else if (user.email === userdb[0].email){
+        bcrypt.compare(user.password, userdb[0].password, function(err, result) {
+          if (err){
+            console.log(err);
+            res.sendStatus(400)
+          } else {
+            const userInfo = {
+              email: userdb[0].email,
+              name: userdb[0].username
+            }
+            const token = jwt.sign({ userInfo }, 'the_secret_key')
+            // In a production app, you'll want the secret key to be an environment variable
+            res.json({
+              token,
+              email: userInfo.email,
+              name: userInfo.name
+            })
+          }
+        });
       }
     });
   } else {
