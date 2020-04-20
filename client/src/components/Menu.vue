@@ -6,7 +6,7 @@
             <router-link v-if="loggedIn" to="/dashboard" class="nav-link navButton">CarPool</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link navButton" href="">Link 3</a>
+            <router-link v-if="loggedIn" to="/profile" class="nav-link navButton">Profilod</router-link>
           </li>
           <li class="nav-item">
             <a v-if="loggedIn" @click="logout" class="nav-link navButton" href="">Kijelentkezés</a>

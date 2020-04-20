@@ -84,7 +84,7 @@ app.post('/login', (req, res) => {
       } else if (user.email === userdb[0].email && user.password === userdb[0].password){
         const userInfo = {
           email: userdb[0].email,
-          name: userdb[0].name
+          name: userdb[0].username
         }
         const token = jwt.sign({ userInfo }, 'the_secret_key')
         // In a production app, you'll want the secret key to be an environment variable
