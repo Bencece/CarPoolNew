@@ -41,11 +41,13 @@ Vue.use(VueRouter)
   {
     path: '/profile',
     name: 'profile',
-    component: Profile
+    component: Profile,
+    meta: { requiresAuth: true }
   }
 ]
 
 const router = new VueRouter({
+  mode: 'history',
   routes
 })
 
