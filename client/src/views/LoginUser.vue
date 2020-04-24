@@ -5,11 +5,11 @@
       <form @submit.prevent="login">
         <div class="form-group">
           <label for="email">Email:</label>
-          <input v-model="email" type="email" name="email" value class="form-control">
+          <input v-model="email" type="email" name="email" value class="form-control" required>
         </div>
         <div class="form-group">
           <label for="password">Jelszó:</label>
-          <input v-model="password" type="password" name="password" value class="form-control">
+          <input v-model="password" type="password" name="password" value class="form-control" required>
         </div>
         <button type="submit" name="button" class="btn btn-success">Bejelentkezés</button>
         <br/>
