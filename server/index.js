@@ -128,6 +128,23 @@ function verifyToken (req, res, next) {
   }
 }
 
+app.get('/cars', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'the_secret_key', err => {
+    if (err) {
+      res.sendStatus(401)
+    } else { 
+      con.query("SELECT car.plate, manufacturers.name, car_type.type, car_type.consumption, units.short_name, car_type.info, car_type.img FROM car, car_type, manufacturers, units WHERE car.typeID = car_type.id AND car_type.manufacturerID = manufacturers.id AND car_type.consumption_unitID = units.id ", function(err, result){
+        if(err){
+          console.log(err);
+          res.status(400);
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+});
+
 app.listen(3000, () => {
   console.log('Server started on port 3000')
 })

@@ -9,6 +9,9 @@
             <router-link v-if="loggedIn" to="/profile" class="nav-link navButton">Profilod</router-link>
           </li>
           <li class="nav-item">
+            <router-link v-if="loggedIn" to="/cars" class="nav-link navButton">Autóink</router-link>
+          </li>
+          <li class="nav-item">
             <a v-if="loggedIn" @click="logout" class="nav-link navButton" href="">Kijelentkezés</a>
           </li>
         </ul>

@@ -1,19 +1,20 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-//import Home from '../views/Home.vue'
+import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
 import RegisterUser from '../views/RegisterUser.vue'
 import LoginUser from '../views/LoginUser.vue'
 import Profile from '../views/Profile.vue'
+import Cars from '../views/Cars.vue'
 
 Vue.use(VueRouter)
 
   const routes = [
-  /*{
-    path: '/',
+  {
+    path: '/home',
     name: 'Home',
     component: Home
-  },*/
+  },
   {
     path: '/about',
     name: 'About',
@@ -42,6 +43,12 @@ Vue.use(VueRouter)
     path: '/profile',
     name: 'profile',
     component: Profile,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/cars',
+    name: 'cars',
+    component: Cars,
     meta: { requiresAuth: true }
   }
 ]
