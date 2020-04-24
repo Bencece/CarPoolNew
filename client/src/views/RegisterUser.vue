@@ -1,7 +1,6 @@
 <template>
-  <div class="row loginBox">
-    <div class="col-sm-4"></div>
-    <div class="jumbotron col-sm-4">
+  <div class="row regBox">
+    <div class="jumbotron">
       <h1 class="title">Regisztráció</h1>
       <h6>Ha nincs fiókod itt tudsz regisztrálni. Töltsd ki a mezőket, majd kattints a regisztráció gomra.</h6>
       <form @submit.prevent="register">
@@ -22,7 +21,6 @@
         <router-link to="/" class="regLabel">Van már fiókod? Lépj be itt...</router-link>
       </form>
     </div>
-    <div class="col-sm-4"></div>
   </div>
 </template>
 
@@ -52,6 +50,13 @@ export default {
 </script>
 
 <style>
+.regBox{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+}
 .regLabel{
   margin-top: 10px;;
 }
