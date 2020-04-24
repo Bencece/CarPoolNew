@@ -3,13 +3,16 @@
       <nav class="navbar navbar-expand-sm  bg-dark navbar-dark sticky-top">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <router-link v-if="loggedIn" to="/dashboard" class="nav-link navButton">CarPool</router-link>
+            <router-link v-if="loggedIn" to="/dashboard" class="nav-link navButton"><font-awesome-icon icon=""/>CarPool</router-link>
           </li>
           <li class="nav-item">
             <router-link v-if="loggedIn" to="/profile" class="nav-link navButton">Profilod</router-link>
           </li>
           <li class="nav-item">
             <router-link v-if="loggedIn" to="/cars" class="nav-link navButton">Autóink</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link v-if="loggedIn" to="/management" class="nav-link navButton">Kezelés</router-link>
           </li>
           <li class="nav-item">
             <a v-if="loggedIn" @click="logout" class="nav-link navButton" href="">Kijelentkezés</a>

@@ -1,20 +1,21 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+//import Home from '../views/Home.vue'
 import Dashboard from '../views/Dashboard.vue'
 import RegisterUser from '../views/RegisterUser.vue'
 import LoginUser from '../views/LoginUser.vue'
 import Profile from '../views/Profile.vue'
 import Cars from '../views/Cars.vue'
+import Management from '../views/Management.vue'
 
 Vue.use(VueRouter)
 
   const routes = [
-  {
+  /*{
     path: '/home',
     name: 'Home',
     component: Home
-  },
+  },*/
   {
     path: '/about',
     name: 'About',
@@ -49,6 +50,12 @@ Vue.use(VueRouter)
     path: '/cars',
     name: 'cars',
     component: Cars,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/management',
+    name: 'management',
+    component: Management,
     meta: { requiresAuth: true }
   }
 ]

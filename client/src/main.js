@@ -6,12 +6,20 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from '../node_modules/axios'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faUserSecret)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
+
 
 new Vue({
   router,
   store,
+  components: { App },
   created () {
     const userString = localStorage.getItem('user') // grab user data from local storage
     if (userString) { // check to see if there is indeed a user
