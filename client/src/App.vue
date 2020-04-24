@@ -1,23 +1,22 @@
 <template>
   <div id="app">
-    <div v-bind:class="{ row : loggedIn, 'contentBox': loggedIn }">
-      <div v-bind:class="{ manuBar: loggedIn , 'col-sm-2' : loggedIn}">
-        <Menu v-if="loggedIn"/>
-      </div>
-      <div v-bind:class="{ contentBar: loggedIn , 'col-sm-10' : loggedIn}">
-        <router-view/>
-      </div>
+    <Menu v-if="loggedIn"/>
+    <div v-bind:class="{ content: loggedIn }">
+      <router-view/>
     </div>
+    <Footer v-if="loggedIn"/>
   </div>
 </template>
 
 <script>
 import Menu from './components/Menu'
+import Footer from './components/Footer'
 import { authComputed } from './store/helpers';
 
 export default {
   components: {
-    Menu
+    Menu,
+    Footer
   },
   computed: {
     ...authComputed
@@ -28,25 +27,15 @@ export default {
 </script>
 
 <style scoped>
-.menuBar{
-  background-color: #000000;
-  height: 100vh;
-  overflow: auto;
-}
-.contentBar{
+.content{
+  margin-top: 10px;
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-bottom: 10px;
+  width: 96%;
+  border-radius: 10px 10px 10px 10px;
   background-color: white;
-}
-.contentBox{
-  margin-right: 0;
-  margin-left: 0;
-}
-html{
-  height: 100%;
-}
-#app{
-  height: 100vh;
-  background-image: linear-gradient(#115f01, #00cc0a);
-  background-repeat: no-repeat;
-  background-size: cover;
+  box-shadow: 0px 0px 5px 1px black;
+  min-height: 90vh;
 }
 </style>

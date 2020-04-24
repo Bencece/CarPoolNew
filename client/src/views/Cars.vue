@@ -26,9 +26,6 @@ export default {
 </script>
 
 <style scoped>
-.cars{
-    background-color: white;
-}
 .cars img{
     width: 200px;
 }

@@ -1,6 +1,6 @@
 <template>
     <div id="nav">
-      <nav class="navbar nav1">
+      <nav class="navbar navbar-expand-sm  bg-dark navbar-dark sticky-top">
         <ul class="navbar-nav">
           <li class="nav-item">
             <router-link v-if="loggedIn" to="/dashboard" class="nav-link navButton">CarPool</router-link>
@@ -37,43 +37,5 @@ export default {
 </script>
 
 <style>
-#nav{
-  position: absolute;
-  left: 0;
-  right: 0;
-  box-shadow: black 2px 2px 10px;
-}
-.navbar{
-  /*background-color: #0E2A5F;
-  background-image: linear-gradient(rgb(29, 96, 221), #0E2A5F);*/
-  background-image: linear-gradient(#00a108, #115f01);
-  height: 100vh;
-}
-.navbar-nav{
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-}
-ul {
-  /*background-color: rgb(29, 96, 221);*/
-}
-.navButton{
-  /*background-color: rgb(29, 96, 221);*/
-  color: white;
-  padding-left: 20px !important;
-  padding-bottom: 20px !important;
-  margin-bottom: 6%;
-  /*margin-left: 10px;
-  margin-right: 10px;
-  border-radius: 10px 10px 10px 10px;*/
-  font-weight: bold;
-}
-.navButton:hover {
-  background-color: #00cc0a;
-  color: white;
-  padding-left: 20px !important;  
-  padding-bottom: 20px;
-  box-shadow: black 5px 5px 10px;
-}
+
 </style>

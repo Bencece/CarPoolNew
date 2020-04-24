@@ -44,9 +44,10 @@ export default {
 
 <style scoped>
 .loginBox{
-  top: 30%;
-  position: relative;
-  margin: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 40%;
 }
 .regLabel{

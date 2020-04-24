@@ -34,7 +34,5 @@ export default {
 </script>
 
 <style scoped>
-#dashboard{
-  height: 100vh;
-}
+
 </style>
