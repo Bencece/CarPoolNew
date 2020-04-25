@@ -1,7 +1,7 @@
 <template>
     <div>
-      <b-alert :show="showMessage" @dismissed="showMessage=false" dismissible variant="success" lazy>{{ this.message.text }}</b-alert>
-      <b-alert :show="showError" @dismissed="showError=false" dismissible variant="danger" lazy>{{ this.error }}</b-alert>
+      <b-alert :show="showMessage" @dismissed="showMessage=false" dismissible variant="success" lazy fade>{{ this.message.text }}</b-alert>
+      <b-alert :show="showError" @dismissed="showError=false" dismissible variant="danger" lazy fade>{{ this.error }}</b-alert>
       <template>
         <div role="tablist">
           <b-card no-body class="mb-1">
@@ -60,11 +60,20 @@
 
           <b-card no-body class="mb-1">
             <b-card-header header-tag="header" class="p-1" role="tab">
-              <b-button block href="#" class="text-left" v-b-toggle.accordion-3 variant="light">Accordion 3</b-button>
+              <b-button block href="#" class="text-left" v-b-toggle.accordion-3 variant="light">Autótípusok kezelése</b-button>
             </b-card-header>
             <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
               <b-card-body>
-                <b-card-text></b-card-text>
+                <form @submit.prevent="addManufacturer">
+                      <h4>Gyártó hozzáadása</h4>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-default">Új gyártó hozzáadása</span>
+                        </div>
+                        <input v-model="manufacturer" type="text" class="form-control" required aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                      </div>
+                    <button type="submit" class="btn btn-primary pull-right">Gyártó hozzáadása</button>
+                </form>
               </b-card-body>
             </b-collapse>
           </b-card>
@@ -80,11 +89,13 @@ export default {
     return {
       car_types: [],
       cars: [],
+      manufacturers: [],
       message: '',
       error: 'Hiba a kérés feldolgozásakor!',
       plate: '',
       type: '',
       rm_plate: '',
+      manufacturer: '',
       showMessage: false,
       showError: false
     }
@@ -93,6 +104,16 @@ export default {
     getCars(){
       axios.get('//localhost:3000/getCars').then(({ data }) => {
         this.cars = data
+      })
+    },
+    getCarTypes(){
+      axios.get('//localhost:3000/getCarTypes').then(({ data }) => {
+        this.car_types = data
+      })
+    },
+    getManufacturers(){
+      axios.get('//localhost:3000/getManufacturers').then(({ data }) => {
+        this.manufacturers = data
       })
     },
     addCar() {
@@ -123,12 +144,23 @@ export default {
         this.showError = true,
         this.rm_plate = ''
       });
+    },
+    addManufacturer(){
+      axios.post('//localhost:3000/addManufacturer',{
+        manufacturer: this.manufacturer
+      }).then(({ data }) => {
+        this.message = data,
+        this.showMessage = true,
+        this.manufacturer = '',
+        this.getManufacturers()
+      }).catch(() => {
+        this.showError = true,
+        this.manufacturer = ''
+      });
     }
   },
   created () {
-    axios.get('//localhost:3000/getCarTypes').then(({ data }) => {
-      this.car_types = data
-    }),
+    this.getCarTypes(),
     this.getCars()
   }
 }
