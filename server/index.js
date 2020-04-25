@@ -196,6 +196,40 @@ app.get('/getCars', verifyToken, (req, res) => {
   });
 });
 
+app.get('/getFuelTypes', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'the_secret_key', err => {
+    if (err) {
+      res.sendStatus(401)
+    } else { 
+      con.query("SELECT * FROM fuel", function(err, result){
+        if(err){
+          console.log(err);
+          res.status(400)
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+});
+
+app.get('/getUnits', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'the_secret_key', err => {
+    if (err) {
+      res.sendStatus(401)
+    } else { 
+      con.query("SELECT * FROM units", function(err, result){
+        if(err){
+          console.log(err);
+          res.status(400)
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+});
+
 app.post('/addCar', verifyToken, (req, res) => {
   jwt.verify(req.token, 'the_secret_key', err => {
     if (err) {

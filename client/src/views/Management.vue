@@ -65,14 +65,64 @@
             <b-collapse id="accordion-3" accordion="my-accordion" role="tabpanel">
               <b-card-body>
                 <form @submit.prevent="addManufacturer">
-                      <h4>Gyártó hozzáadása</h4>
+                      <h4>Új gyártó hozzáadása</h4>
                       <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                          <span class="input-group-text" id="inputGroup-sizing-default">Új gyártó hozzáadása</span>
+                          <span class="input-group-text" id="inputGroup-sizing-default">Gyártó neve</span>
                         </div>
                         <input v-model="manufacturer" type="text" class="form-control" required aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                       </div>
                     <button type="submit" class="btn btn-primary pull-right">Gyártó hozzáadása</button>
+                </form>
+                <hr>
+                <form @submit.prevent="addCarType">
+                      <h4>Új autótípus hozzáadása</h4>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="inputGroupSelect03">Gyártó</label>
+                        </div>
+                        <select v-model="manufacturer_name" class="custom-select" required id="inputGroupSelect03">
+                          <option selected disabled value="">Válaszd ki a gyártót...</option>
+                          <option v-for="manufacturer in manufacturers" :key="manufacturer.id" :value="manufacturer.id">
+                            {{ manufacturer.name }}
+                          </option>
+                        </select>
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-default">Típus neve</span>
+                        </div>
+                        <input v-model="car_type_name" type="text" class="form-control" required aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                      </div>
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-default">Fogyasztás (100km)</span>
+                        </div>
+                        <input v-model="consumption" type="number" step="0.1" class="form-control" required aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="inputGroupSelect04">Mértékegység</label>
+                        </div>
+                        <select v-model="unit" class="custom-select" required id="inputGroupSelect04">
+                          <option selected disabled value="">Válassz mértékegységet...</option>
+                          <option v-for="unit in units" :key="unit.id" :value="unit.id">
+                            {{ unit.short_name }}
+                          </option>
+                        </select>
+                        <div class="input-group-prepend">
+                          <label class="input-group-text" for="inputGroupSelect05">Üzemanyag</label>
+                        </div>
+                        <select v-model="fuel" class="custom-select" required id="inputGroupSelect05">
+                          <option selected disabled value="">Válassz üzemanyagot...</option>
+                          <option v-for="fuel in fuels" :key="fuel.id" :value="fuel.id">
+                            {{ fuel.type }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="input-group mb-3">
+                        <b-form-textarea id="textarea" v-model="text" placeholder="Leírás..." rows="3" max-rows="10"></b-form-textarea>
+                      </div>
+                      <div class="input-group mb-3">
+                        <b-form-file v-model="picture" :state="Boolean(picture)" accept=".jpg, .png" placeholder="Válassz ki vagy húzz ide egy képet..." drop-placeholder="Húzd ide a képet..." browse-text="Tallózás..."></b-form-file>
+                      </div>
+                    <button type="submit" class="btn btn-primary pull-right">Autótípus hozzáadása</button>
                 </form>
               </b-card-body>
             </b-collapse>
@@ -90,12 +140,18 @@ export default {
       car_types: [],
       cars: [],
       manufacturers: [],
+      fuels: [],
+      units: [],
       message: '',
       error: 'Hiba a kérés feldolgozásakor!',
       plate: '',
       type: '',
       rm_plate: '',
       manufacturer: '',
+      car_type_name: '', 
+      consumption: '',
+      fuel: '',
+      picture: null,
       showMessage: false,
       showError: false
     }
@@ -114,6 +170,16 @@ export default {
     getManufacturers(){
       axios.get('//localhost:3000/getManufacturers').then(({ data }) => {
         this.manufacturers = data
+      })
+    },
+    getFuelTypes(){
+      axios.get('//localhost:3000/getFuelTypes').then(({ data }) => {
+        this.fuels = data
+      })
+    },
+    getUnits(){
+      axios.get('//localhost:3000/getUnits').then(({ data }) => {
+        this.units = data
       })
     },
     addCar() {
@@ -161,7 +227,10 @@ export default {
   },
   created () {
     this.getCarTypes(),
-    this.getCars()
+    this.getCars(),
+    this.getManufacturers(),
+    this.getUnits(),
+    this.getFuelTypes()
   }
 }
 </script>
