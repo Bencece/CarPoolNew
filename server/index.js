@@ -145,6 +145,85 @@ app.get('/cars', verifyToken, (req, res) => {
   });
 });
 
+app.get('/getCarTypes', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'the_secret_key', err => {
+    if (err) {
+      res.sendStatus(401)
+    } else { 
+      con.query("SELECT car_type.id, manufacturers.name, car_type.type FROM car_type, manufacturers WHERE car_type.manufacturerID = manufacturers.id", function(err, result){
+        if(err){
+          console.log(err);
+          res.status(400);
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+});
+
+app.post('/addCar', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'the_secret_key', err => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      const car = {
+        plate: req.body.plate,
+        typeID: req.body.typeID
+      }
+      con.query("INSERT INTO car VALUES ('"+car.plate+"', "+car.typeID+")", (err, result) =>{
+        if(err){
+          console.log(err);
+          res.sendStatus(400);
+        } else {
+          res.json({
+            text: car.plate+" sikeresen hozzáadva!"
+          });
+        }
+      });
+    }
+  });  
+});
+
+app.get('/getCars', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'the_secret_key', err => {
+    if (err) {
+      res.sendStatus(401)
+    } else { 
+      con.query("SELECT * FROM car", function(err, result){
+        if(err){
+          console.log(err);
+          res.status(400)
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+});
+
+app.post('/removeCar', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'the_secret_key', err => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      const car = {
+        plate: req.body.plate
+      }
+      con.query("DELETE FROM car WHERE plate='"+car.plate+"'", (err, result) =>{
+        if(err){
+          console.log(err);
+          res.sendStatus(400)
+        } else {
+          res.json({
+            text: car.plate+" sikeresen eltávolítva!"
+          });
+        }
+      });
+    }
+  });  
+});
+
 app.listen(3000, () => {
   console.log('Server started on port 3000')
 })

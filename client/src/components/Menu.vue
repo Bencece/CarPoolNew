@@ -1,9 +1,9 @@
 <template>
-    <div id="nav">
-      <nav class="navbar navbar-expand-sm  bg-dark navbar-dark sticky-top">
+    <div id="nav" class="sticky-top">
+      <nav class="navbar navbar-expand-sm  bg-dark navbar-dark">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <router-link v-if="loggedIn" to="/dashboard" class="nav-link navButton"><font-awesome-icon icon=""/>CarPool</router-link>
+            <router-link v-if="loggedIn" to="/dashboard" class="nav-link navButton"><font-awesome-icon :icon="['fas', 'bars']"/>CarPool</router-link>
           </li>
           <li class="nav-item">
             <router-link v-if="loggedIn" to="/profile" class="nav-link navButton">Profilod</router-link>
@@ -40,5 +40,7 @@ export default {
 </script>
 
 <style>
-
+#nav{
+  box-shadow: 0 4px 18px 0 rgba(0,0,0,.12),0 7px 10px -5px rgba(0,0,0,.15)
+}
 </style>
