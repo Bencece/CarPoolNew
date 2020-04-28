@@ -111,7 +111,7 @@
                         </div>
                         <select v-model="fuel" class="custom-select" required id="inputGroupSelect05">
                           <option selected disabled value="">Válassz üzemanyagot...</option>
-                          <option v-for="fuel in fuels" :key="fuel.id" :value="fuel.id">
+                          <option v-for="fuel in fuels" :key="fuel.fuelID" :value="fuel.fuelID">
                             {{ fuel.type }}
                           </option>
                         </select>
@@ -122,7 +122,7 @@
                       <div class="input-group mb-3">
                         <b-form-file v-model="picture" :state="Boolean(picture)" accept=".jpg" placeholder="Válassz ki vagy húzz ide egy képet..." drop-placeholder="Húzd ide a képet..." browse-text="Tallózás..."></b-form-file>
                       </div>
-                    <button type="submit" :click="uploadImg()" class="btn btn-primary pull-right">Autótípus hozzáadása</button>
+                    <button type="submit" class="btn btn-primary pull-right">Autótípus hozzáadása</button>
                 </form>
               </b-card-body>
             </b-collapse>
@@ -227,31 +227,25 @@ export default {
         this.manufacturer = ''
       });
     },
-    uploadImg(){
+    addCarType(){
       let formData = new FormData();
       formData.append('file', this.picture);
-      axios.post('//localhost:3000/uploadImg', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }).then(({ data }) => {
-        this.message = data,
-        this.showMessage = true,
-        this.picture = ''
-      }).catch(() => {
-        this.showError = true,
-        this.picture = ''
-      });
-    },
-    addCarType(){
-      axios.post('//localhost:3000/addCarType',
-      {
+      var carType = {
         manufacturerID: this.manufacturer_id,
         type: this.car_type_name,
         consumption: this.consumption,
         consumption_unitID: this.unit,
         fuelID: this.fuel,
         info: this.text
+      }
+      for (var data in carType){
+        formData.append(data, carType[data]);
+      }
+      axios.post('//localhost:3000/addCarType', formData, 
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       }).then(({ data }) => {
         this.message = data,
         this.showMessage = true,

@@ -305,30 +305,48 @@ app.post('/addCarType', verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(401)
     } else {
-      const carType = {
-        manufacturerID: req.body.manufacturer_id,
-        type: req.body.car_type_name,
-        consumption: req.body.consumption,
-        consumption_unitID: req.body.unit,
-        fuelID: req.body.fuel,
-        info: req.body.text,
-        img: req.body.manufacturer_id+"_"+req.body.car_type_name+".jpg"
-      }
-      con.query("INSERT INTO car_type (manufacturerID, type, consumption, consumption_unitID, fuelID, info, img) VALUES ('"+carType.manufacturerID+"', '"+carType.type+"', '"+carType.consumption+"', '"+carType.consumption_unitID+"', '"+carType.fuelID+"', '"+carType.info+"', '"+carType.img+"')", (err, result) =>{
-        if(err){
-          console.log(err);
-          res.sendStatus(400);
-        } else {
-          res.json({
-            text: carType.type+" sikeresen hozzáadva!"
-          });
-        }
-      });
+      const form = formidable({ multiples: true });
+      form.parse(req, (err, fields, files) => {
+          if (err){
+            console.log(err);
+            res.sendStatus(400);
+          } else {
+            const carType = {
+              manufacturerID: fields.manufacturerID,
+              type: fields.type,
+              consumption: fields.consumption,
+              consumption_unitID: fields.consumption_unitID,
+              fuelID: fields.fuelID,
+              info: fields.info,
+              img: fields.manufacturerID+"_"+fields.type+".jpg"
+            }
+            var oldpath = files.file.path;
+            var newpath = '../client/public/img/cars/' + files.file.name;
+            fs.rename(oldpath, newpath, function (err) {
+              if (err){
+                console.log(err);
+                res.sendStatus(400);
+              } else{
+                console.log(files.file.name+" mentve.");
+                con.query("INSERT INTO car_type (manufacturerID, type, consumption, consumption_unitID, fuelID, info, img) VALUES ('"+carType.manufacturerID+"', '"+carType.type+"', '"+carType.consumption+"', '"+carType.consumption_unitID+"', '"+carType.fuelID+"', '"+carType.info+"', '"+carType.img+"')", (err, result) =>{
+                  if(err){
+                    console.log(err);
+                    res.sendStatus(400);
+                  } else {
+                    res.json({
+                      text: carType.type+" sikeresen hozzáadva!"
+                    });
+                  }
+                });
+              }
+            });
+          }
+      })
     }
   });  
 });
 
-app.post('/uploadImg', verifyToken, (req, res) => {
+/*app.post('/uploadImg', verifyToken, (req, res) => {
   const form = formidable({ multiples: true });
   form.parse(req, (err, fields, files) => {
       if (err){
@@ -348,7 +366,7 @@ app.post('/uploadImg', verifyToken, (req, res) => {
         });
         }
   });
-});
+});*/
 
 app.listen(3000, () => {
   console.log('Server started on port 3000')
