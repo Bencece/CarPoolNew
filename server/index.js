@@ -6,6 +6,7 @@ const fs = require('fs');
 const events = require('./db/events.json');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const formidable = require('formidable');
 const saltRounds = 10;
 
 const app = express();
@@ -297,6 +298,56 @@ app.post('/addManufacturer', verifyToken, (req, res) => {
       });
     }
   });  
+});
+
+app.post('/addCarType', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'the_secret_key', err => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      const carType = {
+        manufacturerID: req.body.manufacturer_id,
+        type: req.body.car_type_name,
+        consumption: req.body.consumption,
+        consumption_unitID: req.body.unit,
+        fuelID: req.body.fuel,
+        info: req.body.text,
+        img: req.body.manufacturer_id+"_"+req.body.car_type_name+".jpg"
+      }
+      con.query("INSERT INTO car_type (manufacturerID, type, consumption, consumption_unitID, fuelID, info, img) VALUES ('"+carType.manufacturerID+"', '"+carType.type+"', '"+carType.consumption+"', '"+carType.consumption_unitID+"', '"+carType.fuelID+"', '"+carType.info+"', '"+carType.img+"')", (err, result) =>{
+        if(err){
+          console.log(err);
+          res.sendStatus(400);
+        } else {
+          res.json({
+            text: carType.type+" sikeresen hozzáadva!"
+          });
+        }
+      });
+    }
+  });  
+});
+
+app.post('/uploadImg', verifyToken, (req, res) => {
+  const form = formidable({ multiples: true });
+  form.parse(req, (err, fields, files) => {
+      if (err){
+        console.log(err);
+        res.sendStatus(400);
+      } else {
+        var oldpath = files.file.path;
+        var newpath = '../client/public/img/cars/' + files.file.name;
+        fs.rename(oldpath, newpath, function (err) {
+          if (err){
+            console.log(err);
+            res.sendStatus(400);
+          } else{
+            console.log("saved");
+            res.sendStatus(200);
+          }
+        });
+        }
+  });
 });
 
 app.listen(3000, () => {

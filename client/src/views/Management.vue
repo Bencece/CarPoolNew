@@ -8,7 +8,7 @@
             <b-card-header header-tag="header" class="p-1" role="tab">
               <b-button block href="#" class="text-left" v-b-toggle.accordion-1 variant="light">Új autó hozzáadás</b-button>
             </b-card-header>
-            <b-collapse id="accordion-1" visible accordion="my-accordion" role="tabpanel">
+            <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
               <b-card-body>
                 <form @submit.prevent="addCar">
                   <div class="input-group mb-3">
@@ -75,13 +75,13 @@
                     <button type="submit" class="btn btn-primary pull-right">Gyártó hozzáadása</button>
                 </form>
                 <hr>
-                <form @submit.prevent="addCarType">
+                <form @submit.prevent="addCarType" type="multipart/form-data">
                       <h4>Új autótípus hozzáadása</h4>
                       <div class="input-group mb-3">
                         <div class="input-group-prepend">
                           <label class="input-group-text" for="inputGroupSelect03">Gyártó</label>
                         </div>
-                        <select v-model="manufacturer_name" class="custom-select" required id="inputGroupSelect03">
+                        <select v-model="manufacturer_id" class="custom-select" required id="inputGroupSelect03">
                           <option selected disabled value="">Válaszd ki a gyártót...</option>
                           <option v-for="manufacturer in manufacturers" :key="manufacturer.id" :value="manufacturer.id">
                             {{ manufacturer.name }}
@@ -120,9 +120,9 @@
                         <b-form-textarea id="textarea" v-model="text" placeholder="Leírás..." rows="3" max-rows="10"></b-form-textarea>
                       </div>
                       <div class="input-group mb-3">
-                        <b-form-file v-model="picture" :state="Boolean(picture)" accept=".jpg, .png" placeholder="Válassz ki vagy húzz ide egy képet..." drop-placeholder="Húzd ide a képet..." browse-text="Tallózás..."></b-form-file>
+                        <b-form-file v-model="picture" :state="Boolean(picture)" accept=".jpg" placeholder="Válassz ki vagy húzz ide egy képet..." drop-placeholder="Húzd ide a képet..." browse-text="Tallózás..."></b-form-file>
                       </div>
-                    <button type="submit" class="btn btn-primary pull-right">Autótípus hozzáadása</button>
+                    <button type="submit" :click="uploadImg()" class="btn btn-primary pull-right">Autótípus hozzáadása</button>
                 </form>
               </b-card-body>
             </b-collapse>
@@ -144,7 +144,7 @@ export default {
       units: [],
       message: '',
       error: 'Hiba a kérés feldolgozásakor!',
-      plate: '',
+      plate: null,
       type: '',
       rm_plate: '',
       manufacturer: '',
@@ -152,6 +152,9 @@ export default {
       consumption: '',
       fuel: '',
       picture: null,
+      manufacturer_id: '',
+      unit: '',
+      text: '',
       showMessage: false,
       showError: false
     }
@@ -222,6 +225,52 @@ export default {
       }).catch(() => {
         this.showError = true,
         this.manufacturer = ''
+      });
+    },
+    uploadImg(){
+      let formData = new FormData();
+      formData.append('file', this.picture);
+      axios.post('//localhost:3000/uploadImg', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then(({ data }) => {
+        this.message = data,
+        this.showMessage = true,
+        this.picture = ''
+      }).catch(() => {
+        this.showError = true,
+        this.picture = ''
+      });
+    },
+    addCarType(){
+      axios.post('//localhost:3000/addCarType',
+      {
+        manufacturerID: this.manufacturer_id,
+        type: this.car_type_name,
+        consumption: this.consumption,
+        consumption_unitID: this.unit,
+        fuelID: this.fuel,
+        info: this.text
+      }).then(({ data }) => {
+        this.message = data,
+        this.showMessage = true,
+        this.manufacturer_id = '',
+        this.car_type_name = '',
+        this.consumption = '',
+        this.unit = '',
+        this.fuel = '',
+        this.text = '',
+        this.picture = null
+      }).catch(() => {
+        this.showError = true,
+        this.manufacturer_id = '',
+        this.car_type_name = '',
+        this.consumption = '',
+        this.unit = '',
+        this.fuel = '',
+        this.text = '',
+        this.picture = null
       });
     }
   },
