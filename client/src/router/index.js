@@ -7,6 +7,8 @@ import LoginUser from '../views/LoginUser.vue'
 import Profile from '../views/Profile.vue'
 import Cars from '../views/Cars.vue'
 import Management from '../views/Management.vue'
+import CarMap from '../views/Map.vue'
+
 
 Vue.use(VueRouter)
 
@@ -56,6 +58,12 @@ Vue.use(VueRouter)
     path: '/management',
     name: 'management',
     component: Management,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/map',
+    name: 'map',
+    component: CarMap,
     meta: { requiresAuth: true }
   }
 ]
