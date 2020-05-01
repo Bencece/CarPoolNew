@@ -194,7 +194,8 @@ export default {
         this.showMessage = true,
         this.plate = '',
         this.type = '',
-        this.getCars()
+        this.getCars(),
+        this.getCarTypes()
       }).catch(() => {
         this.showError = true,
         this.plate = '',

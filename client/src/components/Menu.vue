@@ -15,6 +15,9 @@
             <router-link v-if="loggedIn" to="/management" class="nav-link navButton">Kezelés</router-link>
           </li>
           <li class="nav-item">
+            <router-link v-if="loggedIn" to="/map" class="nav-link navButton">Térkép</router-link>
+          </li>
+          <li class="nav-item">
             <a v-if="loggedIn" @click="logout" class="nav-link navButton" href="">Kijelentkezés</a>
           </li>
         </ul>

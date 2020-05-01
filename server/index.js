@@ -321,13 +321,13 @@ app.post('/addCarType', verifyToken, (req, res) => {
               img: fields.manufacturerID+"_"+fields.type+".jpg"
             }
             var oldpath = files.file.path;
-            var newpath = '../client/public/img/cars/' + files.file.name;
+            var newpath = '../client/public/img/cars/' + carType.img;
             fs.rename(oldpath, newpath, function (err) {
               if (err){
                 console.log(err);
                 res.sendStatus(400);
               } else{
-                console.log(files.file.name+" mentve.");
+                console.log(carType.img+" mentve.");
                 con.query("INSERT INTO car_type (manufacturerID, type, consumption, consumption_unitID, fuelID, info, img) VALUES ('"+carType.manufacturerID+"', '"+carType.type+"', '"+carType.consumption+"', '"+carType.consumption_unitID+"', '"+carType.fuelID+"', '"+carType.info+"', '"+carType.img+"')", (err, result) =>{
                   if(err){
                     console.log(err);
@@ -341,32 +341,10 @@ app.post('/addCarType', verifyToken, (req, res) => {
               }
             });
           }
-      })
+      });
     }
   });  
 });
-
-/*app.post('/uploadImg', verifyToken, (req, res) => {
-  const form = formidable({ multiples: true });
-  form.parse(req, (err, fields, files) => {
-      if (err){
-        console.log(err);
-        res.sendStatus(400);
-      } else {
-        var oldpath = files.file.path;
-        var newpath = '../client/public/img/cars/' + files.file.name;
-        fs.rename(oldpath, newpath, function (err) {
-          if (err){
-            console.log(err);
-            res.sendStatus(400);
-          } else{
-            console.log("saved");
-            res.sendStatus(200);
-          }
-        });
-        }
-  });
-});*/
 
 app.listen(3000, () => {
   console.log('Server started on port 3000')
