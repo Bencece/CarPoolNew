@@ -25,7 +25,7 @@ export default {
     }
   },
   created () {
-    axios.get('//localhost:3000/dashboard').then(({ data }) => {
+    axios.get('//'+process.env.VUE_APP_SERVER_IP+'/dashboard').then(({ data }) => {
       this.events = data.events.events
       this.isLoading = false
     })

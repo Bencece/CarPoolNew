@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     getCars(){
-      axios.get('//localhost:3000/getCars').then(({ data }) => {
+      axios.get('//'+process.env.VUE_APP_SERVER_IP+'/getCars').then(({ data }) => {
         data.forEach(car => {
           this.cars.push({
             plate: car.plate,

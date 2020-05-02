@@ -161,32 +161,32 @@ export default {
   },
   methods: {
     getCars(){
-      axios.get('//localhost:3000/getCars').then(({ data }) => {
+      axios.get('//'+process.env.VUE_APP_SERVER_IP+'/getCars').then(({ data }) => {
         this.cars = data
       })
     },
     getCarTypes(){
-      axios.get('//localhost:3000/getCarTypes').then(({ data }) => {
+      axios.get('//'+process.env.VUE_APP_SERVER_IP+'/getCarTypes').then(({ data }) => {
         this.car_types = data
       })
     },
     getManufacturers(){
-      axios.get('//localhost:3000/getManufacturers').then(({ data }) => {
+      axios.get('//'+process.env.VUE_APP_SERVER_IP+'/getManufacturers').then(({ data }) => {
         this.manufacturers = data
       })
     },
     getFuelTypes(){
-      axios.get('//localhost:3000/getFuelTypes').then(({ data }) => {
+      axios.get('//'+process.env.VUE_APP_SERVER_IP+'/getFuelTypes').then(({ data }) => {
         this.fuels = data
       })
     },
     getUnits(){
-      axios.get('//localhost:3000/getUnits').then(({ data }) => {
+      axios.get('//'+process.env.VUE_APP_SERVER_IP+'/getUnits').then(({ data }) => {
         this.units = data
       })
     },
     addCar() {
-      axios.post('//localhost:3000/addCar',{
+      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/addCar',{
         plate: this.plate,
         typeID: this.type
       }).then(({ data }) => {
@@ -203,7 +203,7 @@ export default {
       });
     },
     removeCar() {
-      axios.post('//localhost:3000/removeCar',{
+      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/removeCar',{
         plate: this.rm_plate
       }).then(({ data }) => {
         this.message = data,
@@ -216,7 +216,7 @@ export default {
       });
     },
     addManufacturer(){
-      axios.post('//localhost:3000/addManufacturer',{
+      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/addManufacturer',{
         manufacturer: this.manufacturer
       }).then(({ data }) => {
         this.message = data,
@@ -242,7 +242,7 @@ export default {
       for (var data in carType){
         formData.append(data, carType[data]);
       }
-      axios.post('//localhost:3000/addCarType', formData, 
+      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/addCarType', formData, 
       {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -275,6 +275,7 @@ export default {
     this.getManufacturers(),
     this.getUnits(),
     this.getFuelTypes()
+
   }
 }
 </script>

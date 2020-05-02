@@ -12,7 +12,7 @@
               <b-card-text>
                 {{ car.info }}
               </b-card-text>
-              <b-button href="#" variant="primary">További információ</b-button>
+              <b-button :href="'/car?plate='+car.plate" variant="primary">További információ</b-button>
         </b-card>
       </b-card-group>
     </div>
@@ -27,7 +27,7 @@ export default {
     }
   },
   created () {
-    axios.get('//localhost:3000/cars').then(({ data }) => {
+    axios.get('//'+process.env.VUE_APP_SERVER_IP+'/cars').then(({ data }) => {
       this.cars = data;
     })
   }
