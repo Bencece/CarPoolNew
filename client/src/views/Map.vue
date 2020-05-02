@@ -7,6 +7,7 @@
       <button @click="showLongText">
         Toggle long popup
       </button>
+      {{ userPos }}<br>{{ counter }}<br>
     </div>
     <l-map
       :zoom="zoom"
@@ -26,6 +27,11 @@
             <p v-show="showParagraph">
               Ez egy autó
             </p>
+        </l-tooltip>
+      </l-marker>
+      <l-marker v-if="userPosSet" :lat-lng="userPos">
+        <l-tooltip :options="{ permanent: true, interactive: true }">
+          TE {{userPos}}
         </l-tooltip>
       </l-marker>
     </l-map>
@@ -69,7 +75,9 @@ export default {
         zoomSnap: 0.5
       },
       cars: [],
-      userPos: ''
+      userPos: '',
+      userPosSet: false,
+      counter: 0
     };
   },
   methods: {
@@ -87,9 +95,30 @@ export default {
     getUserPos(){
       navigator.geolocation.getCurrentPosition(pos => {
         this.userPos = latLng(pos.coords.latitude, pos.coords.longitude)
+        this.userPosSet = true
       }, err => {
         console.log(err)
       });
+    },
+    trackPosition() {
+      console.log(this.successPosition)
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 15000
+        })
+      } else {
+        console.error("Nincs helymeghatározás!");
+      }
+    },
+    successPosition: function(position) {
+      this.userPos = latLng(position.coords.latitude, position.coords.longitude)
+      this.userPosSet = true
+      this.counter++
+    },
+    failurePosition: function(err) {
+      alert('Error Code: ' + err.code + ' Error Message: ' + err.message)
     },
     zoomUpdate(zoom) {
       this.currentZoom = zoom;
@@ -105,8 +134,9 @@ export default {
     }
   },
   created(){
+    //this.getUserPos();
+    this.trackPosition();
     this.getCars();
-    this.getUserPos();
   }
 };
 </script>

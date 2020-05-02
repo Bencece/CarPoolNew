@@ -8,6 +8,8 @@ const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const formidable = require('formidable');
 const saltRounds = 10;
+var https = require('https')
+
 
 const app = express();
 
@@ -22,9 +24,7 @@ var con = mysql.createConnection({
 });
 
 app.get('/', (req, res) => {
-  res.json({
-    message: 'Welcome to the API.'
-  })
+  res.send("CarPool szerver")
 })
 
 app.get('/dashboard', verifyToken, (req, res) => { //verifyToken is middleware
@@ -61,6 +61,7 @@ app.post('/register', (req, res) => {
               if (err){
                 console.log(err + result);
               } else {
+                console.log(user.name+" registered.");
                 const token = jwt.sign({ user }, 'the_secret_key')
                 // In a production app, you'll want the secret key to be an environment variable
                 res.json({
@@ -99,6 +100,7 @@ app.post('/login', (req, res) => {
               email: userdb[0].email,
               name: userdb[0].username
             }
+            console.log(userInfo.name+" logined.");
             const token = jwt.sign({ userInfo }, 'the_secret_key')
             // In a production app, you'll want the secret key to be an environment variable
             res.json({
@@ -240,7 +242,7 @@ app.post('/addCar', verifyToken, (req, res) => {
         plate: req.body.plate,
         typeID: req.body.typeID
       }
-      con.query("INSERT INTO car VALUES ('"+car.plate+"', "+car.typeID+")", (err, result) =>{
+      con.query("INSERT INTO car (plate, typeID) VALUES ('"+car.plate+"', "+car.typeID+")", (err, result) =>{
         if(err){
           console.log(err);
           res.sendStatus(400);
@@ -346,6 +348,10 @@ app.post('/addCarType', verifyToken, (req, res) => {
   });  
 });
 
-app.listen(3000, () => {
-  console.log('Server started on port 3000')
+https.createServer({
+  key: fs.readFileSync('./cert/server.key'),
+  cert: fs.readFileSync('./cert/server.cert')
+}, app).listen(3000, function () {
+  console.log('Server listening on port 3000!')
 })
+

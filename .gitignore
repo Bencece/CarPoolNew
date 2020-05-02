@@ -106,3 +106,7 @@ dist
 # image files
 *.jpg
 *.png
+
+#cert files
+*.cert
+*.key
