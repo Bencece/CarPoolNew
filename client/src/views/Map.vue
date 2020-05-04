@@ -104,9 +104,9 @@ export default {
       console.log(this.successPosition)
       if (navigator.geolocation) {
         navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
-          enableHighAccuracy: true,
+          enableHighAccuracy: false,
           timeout: 15000,
-          maximumAge: 15000
+          maximumAge: 0
         })
       } else {
         console.error("Nincs helymeghatározás!");
@@ -118,7 +118,8 @@ export default {
       this.counter++
     },
     failurePosition: function(err) {
-      alert('Error Code: ' + err.code + ' Error Message: ' + err.message)
+      //alert('Error Code: ' + err.code + ' Error Message: ' + err.message)
+      console.log('Error Code: ' + err.code + ' Error Message: ' + err.message)
     },
     zoomUpdate(zoom) {
       this.currentZoom = zoom;

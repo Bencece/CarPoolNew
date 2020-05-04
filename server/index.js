@@ -61,7 +61,7 @@ app.post('/register', (req, res) => {
               if (err){
                 console.log(err + result);
               } else {
-                console.log(user.name+" registered.");
+                console.log(user.name+" registered: "+ new Date());
                 const token = jwt.sign({ user }, 'the_secret_key')
                 // In a production app, you'll want the secret key to be an environment variable
                 res.json({
@@ -100,7 +100,7 @@ app.post('/login', (req, res) => {
               email: userdb[0].email,
               name: userdb[0].username
             }
-            console.log(userInfo.name+" logined.");
+            console.log(userInfo.name+" logined: "+ new Date());
             const token = jwt.sign({ userInfo }, 'the_secret_key')
             // In a production app, you'll want the secret key to be an environment variable
             res.json({
@@ -278,8 +278,6 @@ app.post('/removeCar', verifyToken, (req, res) => {
   });  
 });
 
-
-
 app.post('/addManufacturer', verifyToken, (req, res) => {
   jwt.verify(req.token, 'the_secret_key', err => {
     if (err) {
@@ -344,6 +342,16 @@ app.post('/addCarType', verifyToken, (req, res) => {
             });
           }
       });
+    }
+  });  
+});
+
+app.post('/giveUserPos', verifyToken, (req, res) => {
+  jwt.verify(req.token, 'the_secret_key', err => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      console.log(req.token+" "+req.body.pos)
     }
   });  
 });
