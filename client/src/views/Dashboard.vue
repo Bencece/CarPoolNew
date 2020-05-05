@@ -28,7 +28,8 @@ export default {
     axios.get('//'+process.env.VUE_APP_SERVER_IP+'/dashboard').then(({ data }) => {
       this.events = data.events.events
       this.isLoading = false
-    })
+    }),
+    localStorage.removeItem('error')
   }
 }
 </script>

@@ -1,7 +1,9 @@
 <template>
   <div class="loginBox">
+    <b-modal>Nem megfelelő felhasználónév vagy jelszó!</b-modal>
     <div class="jumbotron">
       <h1 class="title">Üdvözlünk!</h1>
+      <p id="err">{{ errorMsg }}</p>
       <form @submit.prevent="login">
         <div class="form-group">
           <label for="email">Email:</label>
@@ -11,7 +13,7 @@
           <label for="password">Jelszó:</label>
           <input v-model="password" type="password" name="password" value class="form-control" required>
         </div>
-        <button type="submit" name="button" class="btn btn-success">Bejelentkezés</button>
+        <button name="button" class="btn btn-success">Bejelentkezés</button>
         <br/>
         <router-link to="/register" class="regLabel">Nincs fiókod? Regisztrálj itt...</router-link>
       </form>
@@ -20,12 +22,18 @@
 </template>
 
 <script>
+import { authComputed } from '../store/helpers';
+
 export default {
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      errorMsg: ''
     }
+  },
+  computed: {
+    ...authComputed
   },
   methods: {
     login () {
@@ -37,7 +45,13 @@ export default {
         .then(() => {
           this.$router.push({ name: 'dashboard' })
         })
+        .catch(() => {
+          localStorage.setItem('error', "Hibás felhasználónév vagy jelszó!")
+        })
     }
+  },
+  created(){
+    this.errorMsg = localStorage.getItem("error")
   }
 }
 </script>
@@ -52,5 +66,8 @@ export default {
 }
 .regLabel{
   margin-top: 10px;
+}
+#err{
+  color: red;
 }
 </style>

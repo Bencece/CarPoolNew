@@ -45,7 +45,6 @@ app.post('/register', (req, res) => {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password
-      // In a production app, you'll want to encrypt the password
     }
     con.query("SELECT * FROM users WHERE email='"+user.email+"'", function(err, userdb){
       if (err){
@@ -90,12 +89,12 @@ app.post('/login', (req, res) => {
       if (err){
         console.log(err);
         res.sendStatus(400);
-      } else if (user.email === userdb[0].email){
+      } else if (userdb[0] != null && user.email === userdb[0].email){
         bcrypt.compare(user.password, userdb[0].password, function(err, result) {
           if (err){
             console.log(err);
             res.sendStatus(400)
-          } else {
+          } else if (result) {
             const userInfo = {
               email: userdb[0].email,
               name: userdb[0].username
@@ -108,8 +107,12 @@ app.post('/login', (req, res) => {
               email: userInfo.email,
               name: userInfo.name
             })
+          } else {
+            res.sendStatus(401)
           }
         });
+      } else {
+        res.sendStatus(401)
       }
     });
   } else {
