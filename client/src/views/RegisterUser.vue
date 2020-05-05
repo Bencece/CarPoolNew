@@ -61,7 +61,7 @@ export default {
     },
     testPassword(){
       if (!this.testRegx(this.password)) {
-        this.errorMsg = "A jelszónak tartalmazia kell legalább egy számot, egy kibetűt, egy nagybetűt és minimum 8 karakter hosszúnak kell lennie!";
+        this.errorMsg = "A jelszónak tartalmazia kell legalább egy számot, egy kisbetűt, egy nagybetűt és minimum 8 karakter hosszúnak kell lennie!";
         return false;
       } else if (this.password != this.password2){
         this.errorMsg = "A jelszavak nem egyeznek meg!";
@@ -80,7 +80,7 @@ export default {
 
 <style>
 .regBox{
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -94,6 +94,7 @@ export default {
 }
 @media only screen and (max-width: 576px) {
   .regBox{
+    top: 65%;
     width: 90%;
   }
 }

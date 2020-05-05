@@ -363,17 +363,19 @@ app.post('/giveUserPos', verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(401)
     } else {
-      //console.log(req.body.id+" "+req.body.latitude+" "+req.body.longitude)
+      console.log(req.body.id+" "+req.body.latitude+" "+req.body.longitude)
       con.query("UPDATE users SET lastLat='"+req.body.latitude+"', lastLong='"+req.body.longitude+"' WHERE users.id='"+req.body.id+"';", (err, result) =>{
         if(err){
           console.log(err);
           res.sendStatus(400);
         } else {
-          con.query("SELECT username, lastLat, lastLong FROM users WHERE NOT id='"+req.body.id+"'", (err, result) =>{
+          //console.log(result)
+          con.query("SELECT username, lastLat, lastLong FROM users WHERE NOT id='"+req.body.id+"' AND NOT id='1'", (err, result) =>{
             if(err){
               console.log(err);
               res.sendStatus(400);
             } else {
+              //console.log(result)
               res.json(result);
             }
           })
@@ -382,6 +384,18 @@ app.post('/giveUserPos', verifyToken, (req, res) => {
     }
   });  
 });
+
+app.post('/getUsersPos', verifyToken, (req, res) => {
+  con.query("SELECT username, lastLat, lastLong FROM users WHERE NOT id='1'", (err, result) =>{
+    if(err){
+      console.log(err);
+      res.sendStatus(400);
+    } else {
+      //console.log(result)
+      res.json(result);
+    }
+  })
+})
 
 https.createServer({
   key: fs.readFileSync('./cert/server.key'),

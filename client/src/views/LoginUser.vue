@@ -1,5 +1,6 @@
 <template>
   <div class="loginBox">
+    <b-img center id="logo" src="../assets/carpool.png"></b-img>
     <div class="jumbotron">
       <h1 class="title">Üdvözlünk!</h1>
       <p id="err">{{ errorMsg }}</p>
@@ -80,6 +81,11 @@ export default {
 .cookieInfo img{
   width: 80px;
   float: left;
+}
+#logo{
+  width: 40%;
+  float: right;
+  padding-right: 10px;
 }
 @media only screen and (max-width: 576px) {
   .loginBox{

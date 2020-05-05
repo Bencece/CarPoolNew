@@ -1,14 +1,14 @@
 <template>
 
   <div style="height: 500px; width: 100%">
-    <div style="height: 200px overflow: auto;">
+    <!-- div style="height: 200px overflow: auto;">
       <p>First marker is placed at {{ withPopup.lat }}, {{ withPopup.lng }}</p>
       <p>Center is at {{ currentCenter }} and the zoom is: {{ currentZoom }}</p>
       <button @click="showLongText">
         Toggle long popup
       </button>
       {{ userPos }}<br>{{ counter }}<br>
-    </div>
+    </div -->
     <l-map
       :zoom="zoom"
       :center="center"
@@ -40,6 +40,7 @@
         </l-tooltip>
       </l-marker>
     </l-map>
+    Pozíciód lekérésének száma: {{ counter }} <br> {{ belepett }}
   </div>
 </template>
 
@@ -87,7 +88,8 @@ export default {
       userPos: '',
       userPosSet: false,
       counter: 0,
-      othersPos: []
+      othersPos: [],
+      belepett: 0
     };
   },
   methods: {
@@ -115,8 +117,8 @@ export default {
       if (navigator.geolocation) {
         navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
           enableHighAccuracy: false,
-          timeout: 15000,
-          maximumAge: 0
+          timeout: 40000,
+          maximumAge: Infinity
         })
       } else {
         console.error("Nincs helymeghatározás!");
@@ -126,19 +128,37 @@ export default {
       this.userPos = latLng(position.coords.latitude, position.coords.longitude)
       this.userPosSet = true
       this.counter++
-      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/giveUserPos',{
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        id: this.getUser.id
-      }).then(({ data }) => {
-        this.othersPos = []
-        data.forEach(user => {
-          this.othersPos.push({
-            username: user.username,
-            pos: latLng(user.lastLat, user.lastLong)
+      if(this.getUser.id != 1){
+        axios.post('//'+process.env.VUE_APP_SERVER_IP+'/giveUserPos',{
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          id: this.getUser.id
+        }).then(({ data }) => {
+            this.belepett++
+            this.othersPos = []
+            data.forEach(user => {
+              this.othersPos.push({
+                username: user.username,
+                pos: latLng(user.lastLat, user.lastLong)
+              })
+              //console.log(user)
+            })
+        }).catch((error) => {
+            console.error("Hiba: "+error)
+        })
+      } else {
+        axios.post('//'+process.env.VUE_APP_SERVER_IP+'/getUsersPos').then(({data}) => {
+          this.othersPos = []
+            data.forEach(user => {
+              this.othersPos.push({
+                username: user.username,
+                pos: latLng(user.lastLat, user.lastLong)
+              })
+          }).catch((error) => {
+            console.error("Hiba: "+error)
           })
-        });
-      })
+        })
+      }
     },
     failurePosition: function(err) {
       //alert('Error Code: ' + err.code + ' Error Message: ' + err.message)
