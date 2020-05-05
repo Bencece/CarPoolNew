@@ -1,27 +1,20 @@
 <template>
-    <div id="nav" class="sticky-top">
-      <nav class="navbar navbar-expand-sm  bg-dark navbar-dark">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <router-link v-if="loggedIn" to="/dashboard" class="nav-link navButton"><font-awesome-icon :icon="['fas', 'bars']"/>CarPool</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link v-if="loggedIn" to="/profile" class="nav-link navButton">Profilod</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link v-if="loggedIn" to="/cars" class="nav-link navButton">Autóink</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link v-if="loggedIn" to="/management" class="nav-link navButton">Kezelés</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link v-if="loggedIn" to="/map" class="nav-link navButton">Térkép</router-link>
-          </li>
-          <li class="nav-item">
-            <a v-if="loggedIn" @click="logout" class="nav-link navButton" href="">Kijelentkezés</a>
-          </li>
-        </ul>
-      </nav>
+    <div>
+      <b-navbar id="nav" toggleable="lg" type="dark" variant="success" class="sticky-top">
+        <b-navbar-brand v-if="loggedIn" to="/dashboard">CarPool</b-navbar-brand>
+
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+
+        <b-collapse id="nav-collapse" is-nav>
+          <b-navbar-nav>
+            <b-nav-item href="#"><router-link v-if="loggedIn" to="/profile" class="nav-link navButton">Profilod</router-link></b-nav-item>
+            <b-nav-item href="#"><router-link v-if="loggedIn" to="/cars" class="nav-link navButton">Autóink</router-link></b-nav-item>
+            <b-nav-item href="#"><router-link v-if="loggedIn" to="/management" class="nav-link navButton">Kezelés</router-link></b-nav-item>
+            <b-nav-item href="#"><router-link v-if="loggedIn" to="/map" class="nav-link navButton">Térkép</router-link></b-nav-item>
+            <b-nav-item href="#"><a v-if="loggedIn" @click="logout" class="nav-link navButton" href="">Kijelentkezés</a></b-nav-item>
+          </b-navbar-nav>
+        </b-collapse>
+      </b-navbar>
     </div>
 </template>
 
