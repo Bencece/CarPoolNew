@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Profilod</h1><br>
-    <h2>Üdv a profilodban {{ getUser }}!</h2>
+    <h2>Üdv a profilodban {{ getUser.name }}!</h2>
   </div>
 </template>
 

@@ -51,7 +51,7 @@ export default new Vuex.Store({
       return !!state.user
     },
     getUser (state) {
-      return state.user.name
+      return state.user
     }
   },
   modules: {

@@ -60,13 +60,20 @@ app.post('/register', (req, res) => {
               if (err){
                 console.log(err + result);
               } else {
-                console.log(user.name+" registered: "+ new Date());
-                const token = jwt.sign({ user }, 'the_secret_key')
-                // In a production app, you'll want the secret key to be an environment variable
-                res.json({
-                  token,
-                  email: user.email,
-                  name: user.name
+                con.query("SELECT id FROM users WHERE email='"+user.email+"'", function(err, id){
+                  if (err){
+                    console.log(err);
+                  } else {
+                    console.log(user.name+" registered: "+ new Date());
+                    const token = jwt.sign({ user }, 'the_secret_key')
+                    // In a production app, you'll want the secret key to be an environment variable
+                    res.json({
+                      token,
+                      email: user.email,
+                      name: user.name,
+                      id: id
+                    })
+                  }
                 })
               }
             });
@@ -97,7 +104,8 @@ app.post('/login', (req, res) => {
           } else if (result) {
             const userInfo = {
               email: userdb[0].email,
-              name: userdb[0].username
+              name: userdb[0].username,
+              id: userdb[0].id
             }
             console.log(userInfo.name+" logined: "+ new Date());
             const token = jwt.sign({ userInfo }, 'the_secret_key')
@@ -105,7 +113,8 @@ app.post('/login', (req, res) => {
             res.json({
               token,
               email: userInfo.email,
-              name: userInfo.name
+              name: userInfo.name,
+              id: userInfo.id
             })
           } else {
             res.sendStatus(401)
@@ -354,7 +363,22 @@ app.post('/giveUserPos', verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(401)
     } else {
-      console.log(req.token+" "+req.body.pos)
+      //console.log(req.body.id+" "+req.body.latitude+" "+req.body.longitude)
+      con.query("UPDATE users SET lastLat='"+req.body.latitude+"', lastLong='"+req.body.longitude+"' WHERE users.id='"+req.body.id+"';", (err, result) =>{
+        if(err){
+          console.log(err);
+          res.sendStatus(400);
+        } else {
+          con.query("SELECT username, lastLat, lastLong FROM users WHERE NOT id='"+req.body.id+"'", (err, result) =>{
+            if(err){
+              console.log(err);
+              res.sendStatus(400);
+            } else {
+              res.json(result);
+            }
+          })
+        }
+      });
     }
   });  
 });

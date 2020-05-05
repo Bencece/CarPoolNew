@@ -31,7 +31,12 @@
       </l-marker>
       <l-marker v-if="userPosSet" :lat-lng="userPos">
         <l-tooltip :options="{ permanent: true, interactive: true }">
-          TE {{userPos}}
+          Pozíciód
+        </l-tooltip>
+      </l-marker>
+      <l-marker v-for="user in othersPos" :key="user.username" :lat-lng="user.pos">
+        <l-tooltip :options="{ permanent: true, interactive: true }">
+          {{ user.username }}
         </l-tooltip>
       </l-marker>
     </l-map>
@@ -43,6 +48,7 @@ import { latLng, Icon } from "leaflet";
 import { LMap, LTileLayer, LMarker, LTooltip } from "vue2-leaflet";
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
+import { authComputed } from '../store/helpers';
 
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
@@ -58,6 +64,9 @@ export default {
     LTileLayer,
     LMarker,
     LTooltip
+  },
+  computed: {
+    ...authComputed
   },
   data() {
     return {
@@ -77,7 +86,8 @@ export default {
       cars: [],
       userPos: '',
       userPosSet: false,
-      counter: 0
+      counter: 0,
+      othersPos: []
     };
   },
   methods: {
@@ -116,6 +126,19 @@ export default {
       this.userPos = latLng(position.coords.latitude, position.coords.longitude)
       this.userPosSet = true
       this.counter++
+      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/giveUserPos',{
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        id: this.getUser.id
+      }).then(({ data }) => {
+        this.othersPos = []
+        data.forEach(user => {
+          this.othersPos.push({
+            username: user.username,
+            pos: latLng(user.lastLat, user.lastLong)
+          })
+        });
+      })
     },
     failurePosition: function(err) {
       //alert('Error Code: ' + err.code + ' Error Message: ' + err.message)
