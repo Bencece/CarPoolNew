@@ -28,6 +28,9 @@ export default new Vuex.Store({
         .then(({ data }) => {
           commit('SET_USER_DATA', data)
         })
+        .catch(function (error) {
+          return Promise.reject(error) 
+        })
     },
     login ({ commit }, credentials) {
       return axios

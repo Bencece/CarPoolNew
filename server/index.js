@@ -49,7 +49,7 @@ app.post('/register', (req, res) => {
     con.query("SELECT * FROM users WHERE email='"+user.email+"'", function(err, userdb){
       if (err){
         console.log(err);
-      } else if (userdb[0] == []){
+      } else if (userdb != ''){
         res.sendStatus(400); //Ha van már ilyen felhasználó
       } else {
         bcrypt.hash(user.password, saltRounds, function(err, hash) {

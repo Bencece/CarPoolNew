@@ -1,6 +1,5 @@
 <template>
   <div class="loginBox">
-    <b-modal>Nem megfelelő felhasználónév vagy jelszó!</b-modal>
     <div class="jumbotron">
       <h1 class="title">Üdvözlünk!</h1>
       <p id="err">{{ errorMsg }}</p>
@@ -18,6 +17,10 @@
         <router-link to="/register" class="regLabel">Nincs fiókod? Regisztrálj itt...</router-link>
       </form>
     </div>
+    <div class="cookieInfo" v-if="helloCookies">
+      <img src="../assets/cookie.png"/>
+      Szereted a sütiket?<br>Az alkalmazás használatával elfogadod a sütik tárolását.
+    </div>
   </div>
 </template>
 
@@ -29,7 +32,8 @@ export default {
     return {
       email: '',
       password: '',
-      errorMsg: ''
+      errorMsg: '',
+      helloCookies: true
     }
   },
   computed: {
@@ -69,5 +73,17 @@ export default {
 }
 #err{
   color: red;
+}
+.cookieInfo{
+  color: black;
+}
+.cookieInfo img{
+  width: 80px;
+  float: left;
+}
+@media only screen and (max-width: 576px) {
+  .loginBox{
+    width: 90%;
+  }
 }
 </style>
