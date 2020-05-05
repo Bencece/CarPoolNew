@@ -7,11 +7,11 @@
 
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
-            <b-nav-item href="#"><router-link v-if="loggedIn" to="/profile" class="nav-link navButton">Profilod</router-link></b-nav-item>
-            <b-nav-item href="#"><router-link v-if="loggedIn" to="/cars" class="nav-link navButton">Autóink</router-link></b-nav-item>
-            <b-nav-item href="#"><router-link v-if="loggedIn" to="/management" class="nav-link navButton">Kezelés</router-link></b-nav-item>
-            <b-nav-item href="#"><router-link v-if="loggedIn" to="/map" class="nav-link navButton">Térkép</router-link></b-nav-item>
-            <b-nav-item href="#"><a v-if="loggedIn" @click="logout" class="nav-link navButton" href="">Kijelentkezés</a></b-nav-item>
+            <b-nav-item><router-link v-if="loggedIn" to="/profile" class="nav-link navButton">Profilod</router-link></b-nav-item>
+            <b-nav-item><router-link v-if="loggedIn" to="/cars" class="nav-link navButton">Autóink</router-link></b-nav-item>
+            <b-nav-item><router-link v-if="loggedIn" to="/management" class="nav-link navButton">Kezelés</router-link></b-nav-item>
+            <b-nav-item><router-link v-if="loggedIn" to="/map" class="nav-link navButton">Térkép</router-link></b-nav-item>
+            <b-nav-item><a v-if="loggedIn" @click="logout" class="nav-link navButton" href="">Kijelentkezés</a></b-nav-item>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>

@@ -12,7 +12,7 @@
               <b-card-text>
                 {{ car.info }}
               </b-card-text>
-              <b-button :href="'/car?plate='+car.plate" variant="primary">További információ</b-button>
+              <b-button :href="'/rent?plate='+car.plate" variant="primary">További információ</b-button>
         </b-card>
       </b-card-group>
     </div>

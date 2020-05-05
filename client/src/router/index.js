@@ -8,7 +8,7 @@ import Profile from '../views/Profile.vue'
 import Cars from '../views/Cars.vue'
 import Management from '../views/Management.vue'
 import CarMap from '../views/Map.vue'
-import Car from '../views/Car.vue'
+import Rent from '../views/Rent.vue'
 
 
 Vue.use(VueRouter)
@@ -68,9 +68,9 @@ Vue.use(VueRouter)
     meta: { requiresAuth: true }
   },
   {
-    path: '/car',
-    name: 'car',
-    component: Car,
+    path: '/rent',
+    name: 'rent',
+    component: Rent,
     meta: { requiresAuth: true }
   }
 ]
