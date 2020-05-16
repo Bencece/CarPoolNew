@@ -1,6 +1,7 @@
 <template>
   <div id="dashboard">
         <h1>Kezdőlap</h1>
+        <h2>Üdv a CarPool alkalmazásban!</h2>
         <template v-if="!isLoading">
           <EventCard v-for="event in events" :key="event.id" :event="event" />
         </template>
