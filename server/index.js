@@ -60,7 +60,7 @@ app.post('/register', (req, res) => {
               if (err){
                 console.log(err + result);
               } else {
-                con.query("SELECT id FROM users WHERE email='"+user.email+"'", function(err, id){
+                con.query("SELECT auth FROM users WHERE email='"+user.email+"'", function(err, auth){
                   if (err){
                     console.log(err);
                   } else {
@@ -71,7 +71,7 @@ app.post('/register', (req, res) => {
                       token,
                       email: user.email,
                       name: user.name,
-                      id: id
+                      auth: auth
                     })
                   }
                 })
@@ -105,7 +105,7 @@ app.post('/login', (req, res) => {
             const userInfo = {
               email: userdb[0].email,
               name: userdb[0].username,
-              id: userdb[0].id
+              auth: userdb[0].auth
             }
             console.log(userInfo.name+" logined: "+ new Date());
             const token = jwt.sign({ userInfo }, 'the_secret_key')
@@ -114,7 +114,7 @@ app.post('/login', (req, res) => {
               token,
               email: userInfo.email,
               name: userInfo.name,
-              id: userInfo.id
+              auth: userInfo.auth
             })
           } else {
             res.sendStatus(401)
