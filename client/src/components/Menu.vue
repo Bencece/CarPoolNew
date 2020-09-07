@@ -9,7 +9,7 @@
           <b-navbar-nav>
             <b-nav-item><router-link v-if="loggedIn" to="/profile" class="nav-link navButton">Profilod</router-link></b-nav-item>
             <b-nav-item><router-link v-if="loggedIn" to="/cars" class="nav-link navButton">Autóink</router-link></b-nav-item>
-            <b-nav-item><router-link v-if="loggedIn" to="/management" class="nav-link navButton">Kezelés</router-link></b-nav-item>
+            <b-nav-item v-if="this.isAdmin"><router-link to="/management" class="nav-link navButton">Kezelés</router-link></b-nav-item>
             <b-nav-item><router-link v-if="loggedIn" to="/map" class="nav-link navButton">Térkép</router-link></b-nav-item>
             <b-nav-item><a v-if="loggedIn" @click="logout" class="nav-link navButton" href="">Kijelentkezés</a></b-nav-item>
           </b-navbar-nav>
@@ -22,8 +22,19 @@
 import { authComputed } from '../store/helpers';
 
 export default {
+    name: 'Menu',
+    data () {
+    return {
+      isAdmin: false
+    }
+  },
   computed: {
       ...authComputed
+  },
+  created(){
+    if(this.getUser.name == "admin"){
+      this.isAdmin = true;
+    }
   },
   methods: {
     logout () {
