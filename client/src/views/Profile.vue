@@ -112,7 +112,9 @@ export default {
 
 <style>
 .profile {
-  margin: auto;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 5%;
   width: 90%;
 }
 input[type="number"]::-webkit-outer-spin-button,

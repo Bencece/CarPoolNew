@@ -42,6 +42,16 @@ export default new Vuex.Store({
           return Promise.reject(error) 
         })
     },
+    userDataLoad ({ commit }, data) {
+      return axios
+        .post('//'+process.env.VUE_APP_SERVER_IP+'/userDataLoad', data)
+        .then(({ data }) => {
+          commit('SET_USER_DATA', data)
+        })
+        .catch(function (error) {
+          return Promise.reject(error) 
+        })
+    },
     logout ({ commit }) {
       commit('LOGOUT')
     }
