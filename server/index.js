@@ -398,6 +398,23 @@ app.post('/getUsersPos', verifyToken, (req, res) => {
   })
 })
 
+app.post('/checkPrivilege', verifyToken, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      if(req.body){
+        console.log(decoded.userInfo.auth+ "== "+req.body.privilige)
+        if(decoded.userInfo.auth == req.body.privilige){
+          res.json({ privilige : true});
+        } else {
+          res.json({ privilige : false});
+        }
+      } else res.sendStatus(403);
+    }
+  });
+});
+
 https.createServer({
   key: fs.readFileSync('./cert/server.key'),
   cert: fs.readFileSync('./cert/server.cert')

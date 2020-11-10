@@ -20,6 +20,7 @@
 
 <script>
 import { authComputed } from '../store/helpers';
+import axios from 'axios'
 
 export default {
     name: 'Menu',
@@ -32,9 +33,12 @@ export default {
       ...authComputed
   },
   created(){
-    if(this.getUser.name == "admin"){
+    /*if(this.getUser.name == "admin"){
       this.isAdmin = true;
-    }
+    }*/
+    axios.post('//'+process.env.VUE_APP_SERVER_IP+'/checkPrivilege', { privilige: 1 }).then(({ data }) => {
+        this.isAdmin = data.privilige;
+      })
   },
   methods: {
     logout () {
