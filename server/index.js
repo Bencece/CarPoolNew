@@ -9,6 +9,7 @@ const bcrypt = require('bcrypt');
 const formidable = require('formidable');
 const saltRounds = 10;
 var https = require('https')
+require('dotenv').config();
 
 
 const app = express();
@@ -28,7 +29,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/dashboard', verifyToken, (req, res) => { //verifyToken is middleware
-  jwt.verify(req.token, 'the_secret_key', err => { // verifies token
+  jwt.verify(req.token, process.env.SECRET_KEY, err => { // verifies token
     if (err) { // if error, respond with 401 code
       res.sendStatus(401)
     } else { // otherwise, respond with private data
@@ -65,7 +66,7 @@ app.post('/register', (req, res) => {
                     console.log(err);
                   } else {
                     console.log(user.name+" registered: "+ new Date());
-                    const token = jwt.sign({ user }, 'the_secret_key')
+                    const token = jwt.sign({ user }, process.env.SECRET_KEY)
                     // In a production app, you'll want the secret key to be an environment variable
                     res.json({
                       token,
@@ -108,13 +109,13 @@ app.post('/login', (req, res) => {
               auth: userdb[0].auth
             }
             console.log(userInfo.name+" logined: "+ new Date());
-            const token = jwt.sign({ userInfo }, 'the_secret_key')
+            const token = jwt.sign({ userInfo }, process.env.SECRET_KEY)
             // In a production app, you'll want the secret key to be an environment variable
             res.json({
               token,
               email: userInfo.email,
-              name: userInfo.name,
-              auth: userInfo.auth
+              name: userInfo.name
+              //auth: userInfo.auth
             })
           } else {
             res.sendStatus(401)
@@ -144,7 +145,7 @@ function verifyToken (req, res, next) {
 }
 
 app.get('/cars', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else { 
@@ -161,7 +162,7 @@ app.get('/cars', verifyToken, (req, res) => {
 });
 
 app.get('/getCarTypes', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else { 
@@ -178,7 +179,7 @@ app.get('/getCarTypes', verifyToken, (req, res) => {
 });
 
 app.get('/getManufacturers', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else { 
@@ -195,7 +196,7 @@ app.get('/getManufacturers', verifyToken, (req, res) => {
 });
 
 app.get('/getCars', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else { 
@@ -212,7 +213,7 @@ app.get('/getCars', verifyToken, (req, res) => {
 });
 
 app.get('/getFuelTypes', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else { 
@@ -229,7 +230,7 @@ app.get('/getFuelTypes', verifyToken, (req, res) => {
 });
 
 app.get('/getUnits', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else { 
@@ -246,7 +247,7 @@ app.get('/getUnits', verifyToken, (req, res) => {
 });
 
 app.post('/addCar', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else {
@@ -269,7 +270,7 @@ app.post('/addCar', verifyToken, (req, res) => {
 });
 
 app.post('/removeCar', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else {
@@ -291,7 +292,7 @@ app.post('/removeCar', verifyToken, (req, res) => {
 });
 
 app.post('/addManufacturer', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else {
@@ -313,7 +314,7 @@ app.post('/addManufacturer', verifyToken, (req, res) => {
 });
 
 app.post('/addCarType', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else {
@@ -359,7 +360,7 @@ app.post('/addCarType', verifyToken, (req, res) => {
 });
 
 app.post('/giveUserPos', verifyToken, (req, res) => {
-  jwt.verify(req.token, 'the_secret_key', err => {
+  jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
     } else {
