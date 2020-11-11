@@ -1,5 +1,6 @@
 <template>
   <div class="profile">
+    <b-alert :show="showMessage" @dismissed="showMessage=false" dismissible variant="success" lazy fade>{{ this.message.text }}</b-alert>
     <h1>Profilod</h1>
     <h2>Üdv a profilodban {{ getUser.name }}!</h2>
     <div class="settingsBox">
@@ -88,6 +89,8 @@ export default {
       },
       show: true,
       editable: false,
+      showMessage: false,
+      message: ""
     };
   },
   computed: {
@@ -115,7 +118,7 @@ export default {
     },
     getUserData(){
       axios.post('//'+process.env.VUE_APP_SERVER_IP+'/getUserData').then(({ data }) => {
-        console.log(data)
+        //console.log(data)
         if (data.length>0){
           this.form.name = data[0].name;
           this.form.postal = data[0].postal_code;
@@ -137,7 +140,8 @@ export default {
           place : this.form.place,
           license : this.form.license
         }).then(({ data }) => {
-          console.log(data)
+          this.message = data,
+          this.showMessage = true
         });
         this.getUserData();
       }
