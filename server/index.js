@@ -45,7 +45,8 @@ app.post('/register', (req, res) => {
     const user = {
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
+      auth: 0
     }
     con.query("SELECT * FROM users WHERE email='"+user.email+"'", function(err, userdb){
       if (err){
@@ -57,22 +58,26 @@ app.post('/register', (req, res) => {
           if (err){
             console.log(err);
           } else {
-            con.query("INSERT INTO users (username, email, password) VALUES('"+user.name+"', '"+user.email+"', '"+hash+"')", function(err, result){
+            con.query("INSERT INTO users (username, email, password, auth) VALUES('"+user.name+"', '"+user.email+"', '"+hash+"', 0)", function(err, result){
               if (err){
                 console.log(err + result);
               } else {
-                con.query("SELECT auth FROM users WHERE email='"+user.email+"'", function(err, auth){
+                con.query("SELECT id FROM users WHERE email='"+user.email+"'", function(err, result){
                   if (err){
                     console.log(err);
                   } else {
                     console.log(user.name+" registered: "+ new Date());
-                    const token = jwt.sign({ user }, process.env.SECRET_KEY)
-                    // In a production app, you'll want the secret key to be an environment variable
+                    const userInfo = {
+                      id: result[0].id,
+                      email: user.email,
+                      name: user.username,
+                      auth: user.auth
+                    }
+                    const token = jwt.sign({ userInfo }, process.env.SECRET_KEY)
                     res.json({
                       token,
                       email: user.email,
-                      name: user.name,
-                      auth: auth
+                      name: user.name
                     })
                   }
                 })
@@ -111,12 +116,10 @@ app.post('/login', (req, res) => {
             }
             console.log(userInfo.name+" logined: "+ new Date());
             const token = jwt.sign({ userInfo }, process.env.SECRET_KEY)
-            // In a production app, you'll want the secret key to be an environment variable
             res.json({
               token,
               email: userInfo.email,
               name: userInfo.name
-              //auth: userInfo.auth
             })
           } else {
             res.sendStatus(401)
@@ -360,7 +363,7 @@ app.post('/addCarType', verifyToken, (req, res) => {
   });  
 });
 
-app.post('/giveUserPos', verifyToken, (req, res) => {
+/*app.post('/giveUserPos', verifyToken, (req, res) => {
   jwt.verify(req.token, process.env.SECRET_KEY, err => {
     if (err) {
       res.sendStatus(401)
@@ -397,14 +400,15 @@ app.post('/getUsersPos', verifyToken, (req, res) => {
       res.json(result);
     }
   })
-})
+})*/
 
 app.post('/checkPrivilege', verifyToken, (req, res) => {
   jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
       res.sendStatus(401)
     } else {
-      if(req.body){
+      console.log(decoded)
+      if(req.body && decoded.userInfo){
         if(decoded.userInfo.auth == req.body.privilige){
           res.json({ privilige : true});
         } else {
@@ -419,16 +423,19 @@ app.post('/getUserData', verifyToken, (req, res) => {
   jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
       res.sendStatus(401)
-    } else { 
-      con.query("SELECT * FROM contact WHERE userID='"+decoded.userInfo.id+"'", function(err, result){
-        //console.log(result)
-        if(err){
-          console.log(err);
-          res.status(400)
-        } else {
-          res.json(result);
-        }
-      });
+    } else {
+      console.log(decoded.userInfo)
+      if(decoded.userInfo){ 
+        con.query("SELECT * FROM contact WHERE userID='"+decoded.userInfo.id+"'", function(err, result){
+          //console.log(result)
+          if(err){
+            console.log(err);
+            res.status(400)
+          } else {
+            res.json(result);
+          }
+        });
+      }
     }
   });
 });

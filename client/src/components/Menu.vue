@@ -38,6 +38,8 @@ export default {
     }*/
     axios.post('//'+process.env.VUE_APP_SERVER_IP+'/checkPrivilege', { privilige: 1 }).then(({ data }) => {
         this.isAdmin = data.privilige;
+      }).catch(()=>{
+        console.log("Hiba a jogosultság ellenőrzésekor!")
       })
   },
   methods: {
