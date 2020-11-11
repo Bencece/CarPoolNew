@@ -3,7 +3,7 @@
     <h1>Profilod</h1>
     <h2>Üdv a profilodban {{ getUser.name }}!</h2>
     <div class="settingsBox">
-      <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+      <b-form @submit.prevent="saveUserData" @reset="onReset" v-if="show">
         <b-form-group
           id="input-group-name"
           label="Kérjük add meg a teljes neved:"
@@ -14,6 +14,7 @@
             v-model="form.name"
             required
             placeholder="név"
+            :disabled="editable"
           ></b-form-input>
         </b-form-group>
 
@@ -32,6 +33,7 @@
               required
               placeholder="irányítószám"
               class="col-sm-4"
+            :disabled="editable"
             ></b-form-input>
             <b-form-input
               id="input-city"
@@ -39,6 +41,7 @@
               required
               placeholder="település"
               class="col-sm-8"
+            :disabled="editable"
             ></b-form-input>
           </div>
             <b-form-input
@@ -46,6 +49,7 @@
               v-model="form.place"
               required
               placeholder="utca, házszám, emelet, ajtó"
+            :disabled="editable"
             ></b-form-input>
         </b-form-group>
 
@@ -55,13 +59,14 @@
             id="checkboxes-license" 
             value="true"
             required
+            :disabled="editable"
             >
               Rendelkezem érvényes személygépjármű vezetéséhez szükséges jogosítvánnyal.
               </b-form-checkbox>
         </b-form-group>
 
-        <b-button type="submit" variant="primary">Mentés</b-button>
-        <b-button type="reset" variant="danger">Reset</b-button>
+        <b-button type="submit" variant="primary" :disabled="editable" >Mentés</b-button>
+        <b-button type="reset" variant="danger" :disabled="editable">Mezők törlése</b-button>
       </b-form>
       <b-card class="mt-3" header="Form Data Result">
         <pre class="m-0">{{ form }}</pre>
@@ -72,6 +77,7 @@
 
 <script>
 import { authComputed } from "../store/helpers";
+import axios from 'axios'
 
 export default {
   data() {
@@ -84,10 +90,14 @@ export default {
         license: "",
       },
       show: true,
+      editable: false,
     };
   },
   computed: {
     ...authComputed,
+  },
+  created(){
+    this.getUserData()
   },
   methods: {
     onSubmit(evt) {
@@ -106,6 +116,36 @@ export default {
         this.show = true;
       });
     },
+    getUserData(){
+      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/getUserData').then(({ data }) => {
+        console.log(data)
+        if (data.length>0){
+          this.form.name = data[0].name;
+          this.form.postal = data[0].postal_code;
+          this.form.city = data[0].city;
+          this.form.place = data[0].place;
+          if(data[0].license){
+            this.form.license = true;
+          } else this.form.license = false;
+          this.editable = true;
+        }
+      })
+    },
+    saveUserData(){
+      if(this.form.name !="" && this.form.postal !="" && this.form.city !="" && this.form.place !=""){
+        axios.post('//'+process.env.VUE_APP_SERVER_IP+'/saveUserData',{
+          name : this.form.name,
+          postal : this.form.postal,
+          city : this.form.city,
+          place : this.form.place,
+          license : this.form.license
+        }).then(({ data }) => {
+          console.log(data)
+        });
+        this.getUserData();
+      }
+      
+    }
   },
 };
 </script>

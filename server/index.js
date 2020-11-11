@@ -104,6 +104,7 @@ app.post('/login', (req, res) => {
             res.sendStatus(400)
           } else if (result) {
             const userInfo = {
+              id: userdb[0].id,
               email: userdb[0].email,
               name: userdb[0].username,
               auth: userdb[0].auth
@@ -404,7 +405,6 @@ app.post('/checkPrivilege', verifyToken, (req, res) => {
       res.sendStatus(401)
     } else {
       if(req.body){
-        console.log(decoded.userInfo.auth+ "== "+req.body.privilige)
         if(decoded.userInfo.auth == req.body.privilige){
           res.json({ privilige : true});
         } else {
@@ -413,6 +413,50 @@ app.post('/checkPrivilege', verifyToken, (req, res) => {
       } else res.sendStatus(403);
     }
   });
+});
+
+app.post('/getUserData', verifyToken, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.sendStatus(401)
+    } else { 
+      con.query("SELECT * FROM contact WHERE userID='"+decoded.userInfo.id+"'", function(err, result){
+        //console.log(result)
+        if(err){
+          console.log(err);
+          res.status(400)
+        } else {
+          res.json(result);
+        }
+      });
+    }
+  });
+});
+
+app.post('/saveUserData', verifyToken, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      const userData = {
+        name : req.body.name,
+        postal : req.body.postal,
+        city : req.body.city,
+        place : req.body.place,
+        license : req.body.license
+      }
+      con.query("INSERT INTO contact (userID, name, postal_code, city, place, license) VALUES ("+decoded.userInfo.id+",'"+userData.name+"',"+userData.postal+",'"+userData.city+"','"+userData.place+"',"+userData.license+")", (err, result) =>{
+        if(err){
+          console.log(err);
+          res.sendStatus(400);
+        } else {
+          res.json({
+            text: "Az adatokat elmentettük!"
+          });
+        }
+      });
+    }
+  });  
 });
 
 https.createServer({
