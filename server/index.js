@@ -18,10 +18,10 @@ app.use(cors());
 app.use(bodyParser.json());
 
 var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "carpool"
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE
 });
 
 app.get('/', (req, res) => {
@@ -462,7 +462,7 @@ app.post('/saveUserData', verifyToken, (req, res) => {
 https.createServer({
   key: fs.readFileSync('./cert/server.key'),
   cert: fs.readFileSync('./cert/server.cert')
-}, app).listen(3000, function () {
-  console.log('Server listening on port 3000!')
+}, app).listen(process.env.SERVER_PORT, function () {
+  console.log('Server listening on port '+process.env.SERVER_PORT+'!')
 })
 
