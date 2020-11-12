@@ -407,7 +407,6 @@ app.post('/checkPrivilege', verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(401)
     } else {
-      console.log(decoded)
       if(req.body && decoded.userInfo){
         if(decoded.userInfo.auth == req.body.privilige){
           res.json({ privilige : true});
@@ -424,7 +423,6 @@ app.post('/getUserData', verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(401)
     } else {
-      console.log(decoded.userInfo)
       if(decoded.userInfo){ 
         con.query("SELECT * FROM contact WHERE userID='"+decoded.userInfo.id+"'", function(err, result){
           //console.log(result)
