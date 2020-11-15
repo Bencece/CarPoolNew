@@ -84,6 +84,8 @@ router.beforeEach((to, from, next) => {
   const loggedIn = localStorage.getItem('user')
   if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
     next('/')
+  } else if (to.path == "/" && loggedIn){
+    next("/dashboard")
   }
   next()
 })

@@ -33,9 +33,6 @@ export default {
       ...authComputed
   },
   created(){
-    /*if(this.getUser.name == "admin"){
-      this.isAdmin = true;
-    }*/
     axios.post('//'+process.env.VUE_APP_SERVER_IP+'/checkPrivilege', { privilige: 1 }).then(({ data }) => {
         this.isAdmin = data.privilige;
       }).catch(()=>{
