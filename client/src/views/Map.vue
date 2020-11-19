@@ -37,6 +37,9 @@
         :url="url"
         :attribution="attribution"
       />
+      <l-control class="userToCenter">
+        <b-icon @click="centerUserPos()" icon="cursor-fill" aria-hidden="true"></b-icon>
+      </l-control>
       <l-marker v-for="car in cars" :key="car.plate" :lat-lng="car.pos" @click="showPopup(car)">
         <l-tooltip :options="{ permanent: true, interactive: true }">
           {{ car.plate }}
@@ -62,7 +65,7 @@
 
 <script>
 import { latLng, Icon } from "leaflet";
-import { LMap, LTileLayer, LMarker, LTooltip } from "vue2-leaflet";
+import { LMap, LTileLayer, LMarker, LTooltip, LControl } from "vue2-leaflet";
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 import { authComputed } from '../store/helpers';
@@ -80,7 +83,8 @@ export default {
     LMap,
     LTileLayer,
     LMarker,
-    LTooltip
+    LTooltip,
+    LControl
   },
   computed: {
     ...authComputed
@@ -222,6 +226,11 @@ export default {
           }
         })
       }    
+    },
+    centerUserPos(){
+      //this.center = latLng(this.userPos.lat, this.userPos.lng);
+      this.center = this.userPos
+      //console.log(this.center)
     }
   },
   created(){
@@ -236,4 +245,18 @@ export default {
 };
 </script>
 <style scoped>
+.userToCenter {
+  background: #fff;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border: 1px solid #aaa;
+  border-radius: 2px;
+  font-size: medium;
+}
+.userToCenter:hover {
+  background-color: #eee;
+  color: #007bff;
+}
 </style>
