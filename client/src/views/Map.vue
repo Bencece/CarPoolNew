@@ -9,6 +9,22 @@
       </button>
       {{ userPos }}<br>{{ counter }}<br>
     </div -->
+    <b-modal id="infoModal" v-model="infoModal" hide-footer>
+      <div class="d-block text-center">
+        <img :src="'./img/cars/'+img" width="200">
+        <h3>{{ selectedCarInfo.plate }}</h3>
+      </div>
+      <div class="text-center">
+        <p v-if="selectedCarInfo.rentable">
+          Ez az autó <b>kibérelhető</b>. A folytatáshoz kattints a "Bérlés" gombra.
+        </p>
+        <p v-else>
+          Ez az autó jelenleg <b>nem bérelhető</b>. Kérjük válassz egy másikat!
+        </p>
+      </div>
+      <b-button class="col-sm-6" variant="success" v-if="selectedCarInfo.rentable">Bérlés</b-button>
+      <b-button class="col-sm-6 float-right" @click="infoModal=false">Mégse</b-button>
+    </b-modal>
     <l-map
       :zoom="zoom"
       :center="center"
@@ -21,7 +37,7 @@
         :url="url"
         :attribution="attribution"
       />
-      <l-marker v-for="car in cars" :key="car.plate" :lat-lng="car.pos">
+      <l-marker v-for="car in cars" :key="car.plate" :lat-lng="car.pos" @click="showPopup(car)">
         <l-tooltip :options="{ permanent: true, interactive: true }">
           {{ car.plate }}
             <p v-show="showParagraph">
@@ -89,7 +105,11 @@ export default {
       userPosSet: false,
       counter: 0,
       othersPos: [],
-      belepett: 0
+      belepett: 0,
+      selectedCarInfo: '',
+      infoModal: false,
+      carTypes: [],
+      img: ''
     };
   },
   methods: {
@@ -99,10 +119,14 @@ export default {
           this.cars.push({
             plate: car.plate,
             typeID: car.typeID,
-            pos: latLng(car.lastLat, car.lastLong)
+            pos: latLng(car.lastLat, car.lastLong),
+            rentable: car.rentable
           })
         });
       });
+      axios.get('//'+process.env.VUE_APP_SERVER_IP+'/cars').then(({ data }) => {
+      this.carTypes = data;
+    })
     },
     getUserPos(){
       navigator.geolocation.getCurrentPosition(pos => {
@@ -128,7 +152,7 @@ export default {
       this.userPos = latLng(position.coords.latitude, position.coords.longitude)
       this.userPosSet = true
       this.counter++
-      if(this.getUser.id != 1){
+      /*if(this.getUser.id != 1){
         axios.post('//'+process.env.VUE_APP_SERVER_IP+'/giveUserPos',{
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -158,7 +182,7 @@ export default {
             console.error("Hiba: "+error)
           })
         })
-      }
+      }*/
     },
     failurePosition: function(err) {
       //alert('Error Code: ' + err.code + ' Error Message: ' + err.message)
@@ -175,12 +199,22 @@ export default {
     },
     innerClick() {
       alert("Click!");
+    },
+    showPopup(car){
+      this.selectedCarInfo = car;
+      this.img = this.carTypes.find((type) => {
+          if(type.plate == this.selectedCarInfo.plate){
+            return type
+          }
+          }).img;
+      this.infoModal = true;
     }
   },
   created(){
     //this.getUserPos();
     this.trackPosition();
     this.getCars();
+    //this.center = this.userPos;
   }
 };
 </script>
