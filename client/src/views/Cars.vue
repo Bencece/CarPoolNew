@@ -12,7 +12,7 @@
               <b-card-text>
                 {{ car.info }}
               </b-card-text>
-              <b-button :href="'/rent?plate='+car.plate" variant="primary">További információ</b-button>
+              <b-button @click="redirectCar(car.plate)" variant="primary">Irány a térkép</b-button>
         </b-card>
       </b-card-group>
     </div>
@@ -24,6 +24,12 @@ export default {
     data () {
     return {
       cars: []
+    }
+  },
+  methods:{
+    redirectCar(plate){
+      localStorage.setItem("plate", plate)
+      this.$router.push({ path: '/map'})
     }
   },
   created () {

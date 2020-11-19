@@ -123,10 +123,10 @@ export default {
             rentable: car.rentable
           })
         });
-      });
+      })
       axios.get('//'+process.env.VUE_APP_SERVER_IP+'/cars').then(({ data }) => {
-      this.carTypes = data;
-    })
+        this.carTypes = data;
+      })
     },
     getUserPos(){
       navigator.geolocation.getCurrentPosition(pos => {
@@ -137,7 +137,6 @@ export default {
       });
     },
     trackPosition() {
-      console.log(this.successPosition)
       if (navigator.geolocation) {
         navigator.geolocation.watchPosition(this.successPosition, this.failurePosition, {
           enableHighAccuracy: false,
@@ -208,6 +207,17 @@ export default {
           }
           }).img;
       this.infoModal = true;
+    },
+    checkQuery(){
+      if(localStorage.getItem("plate")){
+        this.currentCenter = this.cars.find((car) => {
+          if(car.plate == localStorage.getItem("plate")){
+            this.showPopup(car);
+            localStorage.removeItem("plate")
+            return latLng(car.lastLat, car.lastLong);
+          }
+        })
+      }    
     }
   },
   created(){
@@ -215,6 +225,9 @@ export default {
     this.trackPosition();
     this.getCars();
     //this.center = this.userPos;
+  },
+  updated(){
+    this.checkQuery();
   }
 };
 </script>
