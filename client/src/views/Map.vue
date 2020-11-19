@@ -22,7 +22,7 @@
           Ez az autó jelenleg <b>nem bérelhető</b>. Kérjük válassz egy másikat!
         </p>
       </div>
-      <b-button class="col-sm-6" variant="success" v-if="selectedCarInfo.rentable">Bérlés</b-button>
+      <b-button class="col-sm-6 rent" variant="success" v-if="selectedCarInfo.rentable">Bérlés</b-button>
       <b-button class="col-sm-6 float-right" @click="infoModal=false">Mégse</b-button>
     </b-modal>
     <l-map
@@ -75,7 +75,7 @@ Icon.Default.mergeOptions({
 });
 
 export default {
-  name: "Example",
+  name: "Map",
   components: {
     LMap,
     LTileLayer,
@@ -87,7 +87,7 @@ export default {
   },
   data() {
     return {
-      zoom: 13,
+      zoom: 16,
       center: latLng(46.251614, 20.151247),
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution:
@@ -151,6 +151,9 @@ export default {
       this.userPos = latLng(position.coords.latitude, position.coords.longitude)
       this.userPosSet = true
       this.counter++
+      if(this.counter == 1){
+        this.center = this.userPos
+      }
       /*if(this.getUser.id != 1){
         axios.post('//'+process.env.VUE_APP_SERVER_IP+'/giveUserPos',{
           latitude: position.coords.latitude,
@@ -206,6 +209,7 @@ export default {
             return type
           }
           }).img;
+      this.center = car.pos;
       this.infoModal = true;
     },
     checkQuery(){
@@ -231,3 +235,5 @@ export default {
   }
 };
 </script>
+<style scoped>
+</style>
