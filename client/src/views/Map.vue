@@ -16,13 +16,16 @@
       </div>
       <div class="text-center">
         <p v-if="selectedCarInfo.rentable">
-          Ez az autó <b>kibérelhető</b>. A folytatáshoz kattints a "Bérlés" gombra.
+          Ez az autó <b>kibérelhető</b>. A folytatáshoz kattints a "Lefoglalom" gombra.
         </p>
         <p v-else>
           Ez az autó jelenleg <b>nem bérelhető</b>. Kérjük válassz egy másikat!
         </p>
       </div>
-      <b-button class="col-sm-6 rent" variant="success" v-if="selectedCarInfo.rentable">Bérlés</b-button>
+      <b-button class="col-sm-6 rent" variant="primary" @click="startCarRenting(selectedCarInfo)" v-if="selectedCarInfo.rentable">
+        <span v-if="!isLoading">Lefoglalom</span>
+        <b-spinner label="Loading..." v-if="isLoading"></b-spinner>
+        </b-button>
       <b-button class="col-sm-6 float-right" @click="infoModal=false">Mégse</b-button>
     </b-modal>
     <l-map
@@ -113,7 +116,8 @@ export default {
       selectedCarInfo: '',
       infoModal: false,
       carTypes: [],
-      img: ''
+      img: '',
+      isLoading: false
     };
   },
   methods: {
@@ -231,6 +235,14 @@ export default {
       //this.center = latLng(this.userPos.lat, this.userPos.lng);
       this.center = this.userPos
       //console.log(this.center)
+    },
+    startCarRenting(car){
+      this.isLoading=true;
+      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/reserveCar', { plate: car.plate }).then(({ data }) => {
+        if(data.reserved){
+          this.$router.push({ path: '/rent'})
+        }
+      })
     }
   },
   created(){
@@ -258,5 +270,9 @@ export default {
 .userToCenter:hover {
   background-color: #eee;
   color: #007bff;
+}
+.spinner-border {
+  width: 1rem;
+  height: 1rem;
 }
 </style>

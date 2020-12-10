@@ -204,7 +204,7 @@ app.get('/getCars', verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(401)
     } else { 
-      con.query("SELECT * FROM car", function(err, result){
+      con.query("SELECT car.plate, car.typeID, car.lastLat, car.lastLong, availability.rentable, availability.reservedBy FROM car, availability WHERE car.plate = availability.plate", function(err, result){
         if(err){
           console.log(err);
           res.status(400)
@@ -264,9 +264,16 @@ app.post('/addCar', verifyToken, (req, res) => {
           console.log(err);
           res.sendStatus(400);
         } else {
-          res.json({
-            text: car.plate+" sikeresen hozzáadva!"
-          });
+          con.query("INSERT INTO availability (plate) VALUES ('"+car.plate+"')", (err, result) =>{
+            if(err){
+              console.log(err);
+              res.sendStatus(400);
+            } else {
+              res.json({
+                text: car.plate+" sikeresen hozzáadva!"
+              });
+            }
+          })
         }
       });
     }
@@ -463,6 +470,46 @@ app.post('/saveUserData', verifyToken, (req, res) => {
     }
   });  
 });
+
+app.post('/reserveCar', verifyToken, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      if(req.body.plate){
+        var date = new Date();
+        //reservationStarted='"+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+"' 
+        con.query("UPDATE availability SET reservedBy="+decoded.userInfo.id+", rentable=false WHERE plate='"+req.body.plate+"'", function(err, result){
+          //console.log(result)
+          if(err){
+            console.log(err);
+            res.status(400)
+          } else {
+            //setTimeout(cancelCarReservation, 40000, req.body.plate);
+            res.json({
+              reserved: true
+            });
+          }
+        });
+      }
+    }
+  });
+});
+
+/**
+ * SERVCE FUNCTIONS
+ */
+
+function cancelCarReservation(reservedCarPlate){
+  con.query("UPDATE availability SET reservedBy=NULL, rentable=true, reservationStarted=NULL WHERE plate='"+reservedCarPlate+"'", function(err, result){
+    if(err){
+      console.error(err);
+    } else {
+      console.warn(reservedCarPlate+" lefoglalása törölve.")
+    }
+  })
+}
+
 
 https.createServer({
   key: fs.readFileSync('./cert/server.key'),
