@@ -1,21 +1,29 @@
 <template>
-  <div class="box">
-    <h3 id="info" v-if="reserved">
-      Foglalásod hamarosan lejár, kérlek indítsd el a bérlést!
-      <br>
-      <span class="badge badge-warning">{{ timer }} perc</span>
-    </h3>
-    <div v-if="carInfo" class="carInfo">
-      <h3>{{ car.plate }}</h3>
-      <img :src="'./img/cars/'+car.img" alt="car" width="200">
+  <div>
+    <div class="box" v-if="!trip">
+      <h3 id="info" v-if="reserved">
+        Foglalásod hamarosan lejár, kérlek indítsd el a bérlést!
+        <br>
+        <span class="badge badge-warning">{{ timer }} perc</span>
+      </h3>
+      <div v-if="carInfo" class="carInfo">
+        <h3>{{ car.plate }}</h3>
+        <img :src="'./img/cars/'+car.img" alt="car" width="200">
+      </div>
+      <h3 id="info" v-else>Foglalásod lejárt!<br>Válassz egy autót a térképen!</h3>
+      <b-button class="col-sm-6 col-md-12" :variant="reserved ? 'primary' : 'info'" @click="rentCar()">
+        <span v-if="reserved">Induljunk!</span>
+        <span v-else>Irány a térkép!</span>
+      </b-button>
+      <b-button class="col-sm-6 col-md-12" variant="danger" v-if="reserved" @click="stopReservation()">Mégse</b-button>
+      {{ info }}
     </div>
-    <h3 id="info" v-else>Foglalásod lejárt!<br>Válassz egy autót a térképen!</h3>
-    <b-button class="col-sm-6 col-md-12" :variant="reserved ? 'primary' : 'info'" @click="rentCar()">
-      <span v-if="reserved">Induljunk!</span>
-      <span v-else>Irány a térkép!</span>
-    </b-button>
-    <b-button class="col-sm-6 col-md-12" variant="danger" v-if="reserved" @click="stopReservation()">Mégse</b-button>
-    {{ info }}
+    <div class="box" v-if="trip">
+      <div v-if="carInfo" class="carInfo">
+        <h3>{{ car.plate }}</h3>
+        <img :src="'./img/cars/'+car.img" alt="car" width="200">
+      </div>
+    </div>
   </div>
 </template>
 
@@ -32,7 +40,9 @@ export default {
       reserved: false,
       info: "",
       car: null,
-      carInfo: false
+      carInfo: false,
+      trip: false,
+      tripStart: ""
     }
   },
   methods:{
@@ -57,7 +67,8 @@ export default {
       if(this.reserved){
         axios.post('//'+process.env.VUE_APP_SERVER_IP+'/startRenting').then(({ data }) => { 
           localStorage.removeItem("startDate");
-          console.log(data)
+          this.trip = data.trip;
+          this.tripStart = data.tripStart;
         })
       }else{
         this.$router.push({ path: '/map'})
@@ -71,7 +82,7 @@ export default {
         this.carInfo=false;
         localStorage.removeItem("startDate");
         this.timer="0:0"
-      //this.$router.push({ path: '/map'})
+        this.$router.push({ path: '/map'})
       })
     }
   },

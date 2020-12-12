@@ -566,8 +566,34 @@ app.post('/startRenting', verifyToken, (req, res) => {
     if (err) {
       res.sendStatus(401)
     } else {
-      if(decoded.userInfo){ 
-        res.send(decoded.userInfo)
+      if(decoded.userInfo){
+        con.query("SELECT plate, rentable, reservedBy, reservationStarted FROM availability WHERE reservedBy="+decoded.userInfo.id+"", function(err, result){
+          if(err){
+            console.log(err);
+            res.status(400)
+          } else {
+            reservationTimers.find((timer)=>{
+              if(timer.plate == result[0].plate){
+                clearTimeout(timer.timeout);
+                //cancelCarReservation(result[0].plate)
+              }
+            });
+            var now = Date.now();
+            var plate = result[0].plate;
+            con.query("INSERT INTO trip (userID, carPlate, tripStart) VALUES ("+result[0].reservedBy+", '"+result[0].plate+"', '"+now+"')", function(err, result){
+              if(err){
+                console.log(err);
+                res.status(400)
+              } else {
+                console.log(plate+" bérlése elindítva.")
+                res.json({
+                  trip: true,
+                  tripStart: now
+                });
+              }
+            });
+          }
+        });
       }
     }
   });
