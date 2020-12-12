@@ -19,10 +19,16 @@
       {{ info }}
     </div>
     <div class="box" v-if="trip">
-      <div v-if="carInfo" class="carInfo">
+      <h3 id="info">
+        A bérlés elindult!
+        <br>
+        <span class="badge badge-success">{{ timer }}</span>
+      </h3>
+      <div class="carInfo">
         <h3>{{ car.plate }}</h3>
         <img :src="'./img/cars/'+car.img" alt="car" width="200">
       </div>
+      <b-button class="col-sm-12" variant="danger" :disabled="!trip" @click="stopTrip()">Utazás vége</b-button>
     </div>
   </div>
 </template>
@@ -31,6 +37,7 @@
 import axios from 'axios';
 
 var countBack;
+var tripCount;
 
 export default {
   
@@ -63,12 +70,25 @@ export default {
         }
       }, 1000);
     },
+    tripCounterFunction(tripStart){
+      tripCount = setInterval(()=>{
+        var now = new Date().getTime();
+        var distance = (now - tripStart);
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        this.timer=hours+":"+minutes+":"+seconds;
+      }, 1000);
+    },
     rentCar(){
       if(this.reserved){
         axios.post('//'+process.env.VUE_APP_SERVER_IP+'/startRenting').then(({ data }) => { 
+          clearInterval(countBack);
+          this.timer="0:0:0"
           localStorage.removeItem("startDate");
           this.trip = data.trip;
           this.tripStart = data.tripStart;
+          this.tripCounterFunction(this.tripStart)
         })
       }else{
         this.$router.push({ path: '/map'})
@@ -83,6 +103,16 @@ export default {
         localStorage.removeItem("startDate");
         this.timer="0:0"
         this.$router.push({ path: '/map'})
+      })
+    },
+    stopTrip(){
+      clearInterval(tripCount);
+      this.trip=false;
+      this.reserved=false;
+      this.carInfo=false;
+      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/stopTrip',{ plate: this.car.plate, tripStart: this.tripStart }).then(({ data }) => {
+        console.log(data)
+        //this.$router.push({ path: '/map'})
       })
     }
   },

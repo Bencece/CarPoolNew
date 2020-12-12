@@ -599,6 +599,27 @@ app.post('/startRenting', verifyToken, (req, res) => {
   });
 });
 
+app.post('/stopTrip', verifyToken, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      if(req.body.plate){ 
+        cancelCarReservation(req.body.plate)
+        var now = Date.now();
+        con.query("UPDATE trip SET tripEnd='"+now+"' WHERE userID="+decoded.userInfo.id+" AND tripStart='"+req.body.tripStart+"'", function(err, result){
+          if(err){
+            console.log(err);
+            res.status(400)
+          } else {
+            res.sendStatus(200)
+          }
+        });
+      }
+    }
+  });
+});
+
 /**
  * SERVCE FUNCTIONS
  */
