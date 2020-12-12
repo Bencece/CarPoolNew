@@ -499,6 +499,60 @@ app.post('/reserveCar', verifyToken, (req, res) => {
   });
 });
 
+app.post('/getReservedCar', verifyToken, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      if(decoded.userInfo){ 
+        con.query("SELECT availability.plate, availability.reservationStarted, car_type.img FROM availability, car_type, car WHERE reservedBy='"+decoded.userInfo.id+"' AND availability.plate=car.plate AND car.typeID=car_type.id", function(err, result){
+          //console.log(result)
+          if(err){
+            console.log(err);
+            res.status(400)
+          } else {
+            res.json(result);
+          }
+        });
+      }
+    }
+  });
+});
+
+app.post('/stopReservation', verifyToken, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      if(req.body.plate){ 
+        cancelCarReservation(req.body.plate)
+        res.sendStatus(200)
+      }
+    }
+  });
+});
+
+app.post('/isRentable', verifyToken, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      if(req.body.plate){ 
+        con.query("SELECT rentable FROM availability WHERE plate='"+req.body.plate+"'", function(err, result){
+          if(err){
+            console.log(err);
+            res.status(400)
+          } else {
+            res.json({
+              rentable: result[0].rentable
+            });
+          }
+        });
+      }
+    }
+  });
+});
+
 /**
  * SERVCE FUNCTIONS
  */

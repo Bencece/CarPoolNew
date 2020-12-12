@@ -209,14 +209,18 @@ export default {
       alert("Click!");
     },
     showPopup(car){
-      this.selectedCarInfo = car;
-      this.img = this.carTypes.find((type) => {
-          if(type.plate == this.selectedCarInfo.plate){
-            return type
-          }
-          }).img;
-      this.center = car.pos;
-      this.infoModal = true;
+      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/isRentable', { plate: car.plate }).then(({ data }) => {
+        this.selectedCarInfo = car;
+        this.selectedCarInfo.rentable=data.rentable;
+        this.img = this.carTypes.find((type) => {
+            if(type.plate == this.selectedCarInfo.plate){
+              return type
+            }
+            }).img;
+        this.center = car.pos;
+        this.infoModal = true;
+      })
+      
     },
     checkQuery(){
       if(localStorage.getItem("plate")){
