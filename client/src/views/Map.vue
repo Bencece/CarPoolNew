@@ -62,7 +62,7 @@
         </l-tooltip>
       </l-marker>
     </l-map>
-    Pozíciód lekérésének száma: {{ counter }} <br> {{ belepett }}
+    Pozíciód lekérésének száma: {{ counter }}
   </div>
 </template>
 
@@ -112,7 +112,6 @@ export default {
       userPosSet: false,
       counter: 0,
       othersPos: [],
-      belepett: 0,
       selectedCarInfo: '',
       infoModal: false,
       carTypes: [],
@@ -168,7 +167,6 @@ export default {
           longitude: position.coords.longitude,
           id: this.getUser.id
         }).then(({ data }) => {
-            this.belepett++
             this.othersPos = []
             data.forEach(user => {
               this.othersPos.push({
@@ -240,6 +238,7 @@ export default {
       this.isLoading=true;
       axios.post('//'+process.env.VUE_APP_SERVER_IP+'/reserveCar', { plate: car.plate }).then(({ data }) => {
         if(data.reserved){
+          localStorage.setItem("startDate", data.startDate);
           this.$router.push({ path: '/rent'})
         }
       })

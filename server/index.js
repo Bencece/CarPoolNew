@@ -479,15 +479,18 @@ app.post('/reserveCar', verifyToken, (req, res) => {
       if(req.body.plate){
         var date = new Date();
         //reservationStarted='"+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+"' 
-        con.query("UPDATE availability SET reservedBy="+decoded.userInfo.id+", rentable=false WHERE plate='"+req.body.plate+"'", function(err, result){
+        con.query("UPDATE availability SET reservedBy="+decoded.userInfo.id+", rentable=false, reservationStarted="+Date.now()+" WHERE plate='"+req.body.plate+"'", function(err, result){
           //console.log(result)
           if(err){
             console.log(err);
             res.status(400)
           } else {
-            //setTimeout(cancelCarReservation, 40000, req.body.plate);
+            console.log(req.body.plate+" lefoglalva, USER: "+decoded.userInfo.id)
+            setTimeout(cancelCarReservation, 30000, req.body.plate);
+            var startDate = Date.now();
             res.json({
-              reserved: true
+              reserved: true,
+              startDate: startDate
             });
           }
         });
