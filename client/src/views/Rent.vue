@@ -22,6 +22,8 @@
 <script>
 import axios from 'axios';
 
+var countBack;
+
 export default {
   
   data () {
@@ -35,7 +37,7 @@ export default {
   },
   methods:{
     counterFunction(countDownDate){
-      var countBack = setInterval(()=>{
+      countBack = setInterval(()=>{
         var now = new Date().getTime();
         var distance = countDownDate - now;
         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -53,18 +55,24 @@ export default {
     },
     rentCar(){
       if(this.reserved){
-        this.info="Info"
+        axios.post('//'+process.env.VUE_APP_SERVER_IP+'/startRenting').then(({ data }) => { 
+          localStorage.removeItem("startDate");
+          console.log(data)
+        })
       }else{
         this.$router.push({ path: '/map'})
       }
     },
     stopReservation(){
-      this.info=""
-      this.reserved=false;
-      this.carInfo=false;
-      localStorage.removeItem("startDate");
-      this.timer="0:0"
-      this.$router.push({ path: '/map'})
+      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/stopReservation',{ plate: this.car.plate }).then(() => {
+        clearInterval(countBack);
+        this.info=""
+        this.reserved=false;
+        this.carInfo=false;
+        localStorage.removeItem("startDate");
+        this.timer="0:0"
+      //this.$router.push({ path: '/map'})
+      })
     }
   },
   created(){

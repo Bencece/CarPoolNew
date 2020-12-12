@@ -471,6 +471,8 @@ app.post('/saveUserData', verifyToken, (req, res) => {
   });  
 });
 
+var reservationTimers = [];
+
 app.post('/reserveCar', verifyToken, (req, res) => {
   jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
@@ -486,7 +488,8 @@ app.post('/reserveCar', verifyToken, (req, res) => {
             res.status(400)
           } else {
             console.log(req.body.plate+" lefoglalva, USER: "+decoded.userInfo.id)
-            setTimeout(cancelCarReservation, 30000, req.body.plate);
+            reservationTimers.push({ timeout: setTimeout(cancelCarReservation, 30000, req.body.plate), plate: req.body.plate});
+            //console.log(reservationTimer.ref())
             var startDate = Date.now();
             res.json({
               reserved: true,
@@ -519,18 +522,23 @@ app.post('/getReservedCar', verifyToken, (req, res) => {
   });
 });
 
-/*app.post('/stopReservation', verifyToken, (req, res) => {
+app.post('/stopReservation', verifyToken, (req, res) => {
   jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
       res.sendStatus(401)
     } else {
-      if(req.body.plate){ 
-        cancelCarReservation(req.body.plate)
+      if(req.body.plate){
+        reservationTimers.find((timer)=>{
+          if(timer.plate == req.body.plate){
+            clearTimeout(timer.timeout);
+            cancelCarReservation(req.body.plate)
+          }
+        });
         res.sendStatus(200)
       }
     }
   });
-});*/
+});
 
 app.post('/isRentable', verifyToken, (req, res) => {
   jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
@@ -548,6 +556,18 @@ app.post('/isRentable', verifyToken, (req, res) => {
             });
           }
         });
+      }
+    }
+  });
+});
+
+app.post('/startRenting', verifyToken, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      if(decoded.userInfo){ 
+        res.send(decoded.userInfo)
       }
     }
   });
