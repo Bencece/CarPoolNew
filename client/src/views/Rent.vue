@@ -14,7 +14,7 @@
       <span v-if="reserved">Induljunk!</span>
       <span v-else>Irány a térkép!</span>
     </b-button>
-    <b-button class="col-sm-6 col-md-12" variant="danger" v-if="reserved" @click="stopReservation()">Foglalás törlése</b-button>
+    <b-button class="col-sm-6 col-md-12" variant="danger" v-if="reserved" @click="stopReservation()">Mégse</b-button>
     {{ info }}
   </div>
 </template>
@@ -59,13 +59,12 @@ export default {
       }
     },
     stopReservation(){
-      axios.post('//'+process.env.VUE_APP_SERVER_IP+'/stopReservation', { plate: this.car.plate }).then(() => {
-        this.info=""
-        this.reserved=false;
-        this.carInfo=false;
-        localStorage.removeItem("startDate");
-        this.timer="0:0"
-      })
+      this.info=""
+      this.reserved=false;
+      this.carInfo=false;
+      localStorage.removeItem("startDate");
+      this.timer="0:0"
+      this.$router.push({ path: '/map'})
     }
   },
   created(){

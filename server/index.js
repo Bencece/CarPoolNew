@@ -477,7 +477,7 @@ app.post('/reserveCar', verifyToken, (req, res) => {
       res.sendStatus(401)
     } else {
       if(req.body.plate){
-        var date = new Date();
+        //var date = new Date();
         //reservationStarted='"+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+"' 
         con.query("UPDATE availability SET reservedBy="+decoded.userInfo.id+", rentable=false, reservationStarted="+Date.now()+" WHERE plate='"+req.body.plate+"'", function(err, result){
           //console.log(result)
@@ -519,7 +519,7 @@ app.post('/getReservedCar', verifyToken, (req, res) => {
   });
 });
 
-app.post('/stopReservation', verifyToken, (req, res) => {
+/*app.post('/stopReservation', verifyToken, (req, res) => {
   jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
       res.sendStatus(401)
@@ -530,7 +530,7 @@ app.post('/stopReservation', verifyToken, (req, res) => {
       }
     }
   });
-});
+});*/
 
 app.post('/isRentable', verifyToken, (req, res) => {
   jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
