@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const events = require('./db/events.json');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const formidable = require('formidable');
@@ -26,18 +25,6 @@ var con = mysql.createConnection({
 
 app.get('/', (req, res) => {
   res.send("CarPool szerver")
-})
-
-app.get('/dashboard', verifyToken, (req, res) => { //verifyToken is middleware
-  jwt.verify(req.token, process.env.SECRET_KEY, err => { // verifies token
-    if (err) { // if error, respond with 401 code
-      res.sendStatus(401)
-    } else { // otherwise, respond with private data
-      res.json({
-        events: events
-      })
-    }
-  })
 })
 
 app.post('/register', (req, res) => {
@@ -613,6 +600,27 @@ app.post('/stopTrip', verifyToken, (req, res) => {
             res.status(400)
           } else {
             res.sendStatus(200)
+          }
+        });
+      }
+    }
+  });
+});
+
+app.post('/getRentingHistory', verifyToken, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      res.sendStatus(401)
+    } else {
+      if(decoded.userInfo.id){ 
+        con.query("SELECT * FROM trip WHERE userID="+decoded.userInfo.id+"", function(err, result){
+          if(err){
+            console.log(err);
+            res.status(400)
+          } else {
+            res.json({
+              trips: result
+            });
           }
         });
       }

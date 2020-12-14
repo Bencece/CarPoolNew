@@ -6,32 +6,33 @@
       <h4 class="right">Szükséged van egy autóra?</h4>
       <h4>Foglald le az autót, menj el az úticélodra és parkolj le. Ennyi.</h4>
     </div>
+    <h3 id="title">Korábbi utazásaid:</h3>
         <template v-if="!isLoading">
-          <EventCard v-for="event in events" :key="event.id" :event="event" />
+          <TripCards v-for="trip in trips" :key="trip.id" :trip="trip" />
         </template>
         <p v-else>
-          Loading events
+          <b-spinner label="Utazások betöltése..." class="loadSpinner"></b-spinner>
         </p>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-import EventCard from '../components/EventCard'
+import TripCards from '../components/TripCards'
 
 export default {
   components: { 
-    EventCard
+    TripCards
   },
   data () {
     return {
       isLoading: true,
-      events: []
+      trips: []
     }
   },
   created () {
-    axios.get('//'+process.env.VUE_APP_SERVER_IP+'/dashboard').then(({ data }) => {
-      this.events = data.events.events
+    axios.post('//'+process.env.VUE_APP_SERVER_IP+'/getRentingHistory').then(({ data }) => {
+      this.trips = data.trips
       this.isLoading = false
     }),
     localStorage.removeItem('error')
@@ -41,7 +42,7 @@ export default {
 
 <style scoped>
 #dashboard{
-  background-image: url("../assets/vwgolf_gauss.jpg");
+  /*background-image: url("../assets/vwgolf_gauss.jpg");*/
   background-size: contain;
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -50,13 +51,16 @@ export default {
 .dashboardBox{
   /*background-image: linear-gradient(#28a745, white);*/
   padding: 10px;
-  color: white;
-  text-shadow: 2px 2px 3px black;
+  color: black;
+  /*text-shadow: 2px 2px 3px black;*/
 }
 #title{
   text-align: center;
 }
 .right{
   text-align: right;
+}
+.loadSpinner{
+  color:green;
 }
 </style>
